@@ -1,1 +1,0 @@
-(()=>{const d=s=>atob(s);document.querySelectorAll(d("YVtocmVmXj0iIyJd")).forEach(a=>a.addEventListener(d("Y2xpY2s="),e=>{const h=a.getAttribute(d("aHJlZg=="));if(h.length>1){const t=document.querySelector(h);t&&(e.preventDefault(),t.scrollIntoView({behavior:d("c21vb3Ro"),block:d("c3RhcnQ=")}))}}))})();
