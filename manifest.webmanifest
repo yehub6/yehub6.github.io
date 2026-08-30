@@ -1,7 +1,7 @@
 {
   "name": "宝妈阿叶",
   "short_name": "宝妈阿叶",
-  "description": "宝妈阿叶的 Mac 与 iOS 应用官网",
+  "description": "宝妈阿叶的 Mac、iPhone 与 iPad 应用官网",
   "lang": "zh-CN",
   "start_url": "./",
   "display": "standalone",
