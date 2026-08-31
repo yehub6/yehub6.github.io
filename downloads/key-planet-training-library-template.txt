@@ -1,0 +1,16 @@
+# 键盘星球自定义题库 v1
+# 每行一题，必须使用 Tab 分隔四列：类别、难度、显示文字、输入答案
+# 类别：word / sentence / pinyin / idiom / math
+# 难度：beginner / explorer / lightning
+# 以 # 开头的行是说明，不会导入。下面是不带 # 的可导入示例。
+word	beginner	peach	peach
+word	explorer	spaceship	spaceship
+sentence	beginner	i can read	i can read
+sentence	lightning	practice helps me learn every day	practice helps me learn every day
+pinyin	beginner	桃子	tao zi
+pinyin	explorer	我喜欢读故事	wo xi huan du gu shi
+idiom	beginner	守株待兔	shou zhu dai tu
+idiom	lightning	学无止境	xue wu zhi jing
+math	beginner	9+7=16	9+7=16
+math	explorer	12*8=96	12*8=96
+math	lightning	(18+6)*4=96	(18+6)*4=96
