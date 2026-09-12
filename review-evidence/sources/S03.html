@@ -1,0 +1,33 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S03 · Screenshot seed entry and sample metadata · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S03</p><h1>S03 · 制作视频 / Vidma</h1><p class="lead" lang="en">Screenshot seed entry and sample metadata</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vidma.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S03.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: vidma<br>Original relative path: Vidma/App/MarketingCaptureSeed.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: d09a909daedd3c0d1242113560b2ceebf413224168ffa9c71a526fc2efcb04a8<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 33</h2><pre class="source-code"><code>0001  import Foundation
+0002  
+0003  /// Deterministic, non-personal demo state used only while producing App Store
+0004  /// screenshots. Normal launches never enter this branch; no demo media is
+0005  /// bundled with the shipping application.
+0006  enum MarketingCaptureSeed {
+0007      static var isEnabled: Bool {
+0008          ProcessInfo.processInfo.arguments.contains(&quot;-marketing-capture&quot;)
+0009      }
+0010  
+0011      static func makeProject() -&gt; VideoProject {
+0012          let video = ProjectAsset(
+0013              id: stableID(&quot;11111111-1111-1111-1111-111111111111&quot;),
+0014              kind: .video,
+0015              localRelativePath: &quot;marketing-demo.mp4&quot;,
+0016              displayName: String(localized: &quot;marketing.asset.video&quot;),
+0017              metadata: MediaMetadata(
+0018                  duration: 12,
+0019                  width: 1920,
+0020                  height: 1080,
+0021                  nominalFrameRate: 30,
+0022                  fileSize: 5_154_712,
+0023                  videoCodec: &quot;H.264&quot;,
+0024                  videoBitrate: 3_200_000,
+0025                  audioCodec: &quot;AAC&quot;,
+0026                  audioBitrate: 128_000,
+0027                  audioSampleRate: 48_000,
+0028                  audioChannels: 1,
+0029                  isHDR: false
+0030              )
+0031          )
+0032          let image = ProjectAsset(
+0033              id: stableID(&quot;22222222-2222-2222-2222-222222222222&quot;),</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

@@ -1,0 +1,90 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S02 · Sample state versus normal project loading · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S02</p><h1>S02 · 制作视频 / Vidma</h1><p class="lead" lang="en">Sample state versus normal project loading</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vidma.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S02.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: vidma<br>Original relative path: Vidma/App/AppModel.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: dd06340be12c01be850fb17f787606c30e26ae2da7826539ed3659aee4e6f7e9<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 43 to 132</h2><pre class="source-code"><code>0043      func load() async {
+0044          do {
+0045              if MarketingCaptureSeed.isEnabled {
+0046                  let project = MarketingCaptureSeed.makeProject()
+0047                  projects = [project]
+0048                  activeProject = project
+0049                  appearance = .dark
+0050                  favorites = [.allInOne, .subtitles, .pictureInPicture, .convert]
+0051                  recentTools = [.allInOne, .subtitles, .pictureInPicture, .mosaic]
+0052                  tasks = []
+0053                  let arguments = ProcessInfo.processInfo.arguments
+0054                  if arguments.contains(&quot;-marketing-capture-tools&quot;) {
+0055                      selectedTab = 1
+0056                  } else if arguments.contains(&quot;-marketing-capture-export&quot;) {
+0057                      navigationPath.append(Route.export(project.id))
+0058                  } else if arguments.contains(&quot;-marketing-capture-editor&quot;) ||
+0059                              arguments.contains(&quot;-marketing-capture-layer&quot;) ||
+0060                              arguments.contains(&quot;-marketing-capture-subtitle&quot;) {
+0061                      navigationPath.append(Route.editor(project.id))
+0062                  } else {
+0063                      selectedTab = 0
+0064                  }
+0065                  return
+0066              }
+0067              if ProcessInfo.processInfo.arguments.contains(&quot;-ui-testing&quot;) {
+0068                  if ProcessInfo.processInfo.arguments.contains(&quot;-ui-testing-empty-creator&quot;) {
+0069                      projects = []; tasks = []; return
+0070                  }
+0071                  var project = VideoProject(name: &quot;UI Test Project&quot;)
+0072                  if ProcessInfo.processInfo.arguments.contains(&quot;-ui-testing-layer-editor&quot;),
+0073                     let module = registry.module(for: .allInOne) {
+0074                      let video = ProjectAsset(kind: .video, localRelativePath: &quot;missing-ui-test-video.mp4&quot;, displayName: &quot;Timeline Video&quot;, metadata: MediaMetadata(duration: 5, width: 1280, height: 720, nominalFrameRate: 30, fileSize: 4_096, isHDR: false))
+0075                      let audio = ProjectAsset(kind: .audio, localRelativePath: &quot;missing-ui-test-audio.m4a&quot;, displayName: &quot;Timeline Audio&quot;, metadata: MediaMetadata(duration: 5, width: 0, height: 0, nominalFrameRate: 0, fileSize: 1_024, isHDR: false))
+0076                      project = VideoProject(
+0077                          name: &quot;UI Test Project&quot;,
+0078                          assets: [video, audio],
+0079                          clips: [VideoClip(assetID: video.id, sourceStart: 0, sourceDuration: 5, timelineStart: 0)],
+0080                          audioClips: [AudioClip(assetID: audio.id, sourceStart: 0, duration: 5, timelineStart: 0, volume: 1, fadeIn: 0, fadeOut: 0)],
+0081                          overlays: [
+0082                              OverlayItem(kind: .text, text: &quot;Canvas Text&quot;, start: 0, duration: 5, normalizedX: 0.2, normalizedY: 0.3, normalizedWidth: 0.6, normalizedHeight: 0.2, zIndex: 20, subtitleStyle: .standard, name: &quot;Text Layer&quot;),
+0083                              OverlayItem(kind: .mosaicMask, start: 0, duration: 5, normalizedX: 0.35, normalizedY: 0.2, normalizedWidth: 0.3, normalizedHeight: 0.3, zIndex: 10, name: &quot;Mosaic Layer&quot;)
+0084                          ],
+0085                          modules: [ProjectModule(moduleID: .allInOne, parameters: module.defaultParameters)],
+0086                          canvasWidth: 1280,
+0087                          canvasHeight: 720,
+0088                          frameRate: 30
+0089                      )
+0090                  } else if ProcessInfo.processInfo.arguments.contains(&quot;-ui-testing-subtitle-editor&quot;),
+0091                     let module = registry.module(for: .subtitles) {
+0092                      project.canvasWidth = 1080
+0093                      project.canvasHeight = 1920
+0094                      project.modules = [ProjectModule(moduleID: .subtitles, parameters: module.defaultParameters)]
+0095                      project.overlays = [
+0096                          OverlayItem(
+0097                              kind: .subtitle,
+0098                              text: &quot;A sample caption&quot;,
+0099                              start: 0,
+0100                              duration: 2.5,
+0101                              normalizedX: 0.08,
+0102                              normalizedY: 0.76,
+0103                              normalizedWidth: 0.84,
+0104                              normalizedHeight: 0.16,
+0105                              zIndex: 300,
+0106                              subtitleStyle: .standard
+0107                          )
+0108                      ]
+0109                  } else if ProcessInfo.processInfo.arguments.contains(&quot;-ui-testing-speech-preflight&quot;),
+0110                     let module = registry.module(for: .subtitles) {
+0111                      let asset = ProjectAsset(
+0112                          kind: .video,
+0113                          localRelativePath: &quot;missing-ui-test-video.mp4&quot;,
+0114                          displayName: &quot;Speech Test.mp4&quot;,
+0115                          metadata: MediaMetadata(duration: 5, width: 1280, height: 720, nominalFrameRate: 30, fileSize: 1_024, isHDR: false)
+0116                      )
+0117                      project = VideoProject(name: &quot;UI Test Project&quot;, assets: [asset], modules: [ProjectModule(moduleID: .subtitles, parameters: module.defaultParameters)])
+0118                  } else if ProcessInfo.processInfo.arguments.contains(&quot;-ui-testing-seeded-module&quot;),
+0119                     let module = registry.module(for: .trim) {
+0120                      project.modules = [ProjectModule(moduleID: .trim, parameters: module.defaultParameters)]
+0121                  }
+0122                  projects = [project]
+0123                  tasks = []
+0124                  return
+0125              }
+0126              projects = try await repository.loadAll()
+0127              favorites = Set(UserDefaults.standard.stringArray(forKey: &quot;favoriteTools&quot;)?.compactMap(VideoToolID.init(rawValue:)) ?? [])
+0128              recentTools = UserDefaults.standard.stringArray(forKey: &quot;recentTools&quot;)?.compactMap(VideoToolID.init(rawValue:)) ?? []
+0129              appearance = AppAppearance(rawValue: UserDefaults.standard.string(forKey: &quot;appearance&quot;) ?? &quot;system&quot;) ?? .system
+0130              tasks = await taskQueue.snapshot()
+0131          } catch {
+0132              alert = AppError.wrap(error, context: &quot;load projects&quot;)</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

@@ -1,0 +1,51 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# D09  Local review-note document not proof of submission
+
+Project key: key
+Original relative path: Docs/AppStore正式送审资料包_付费版_iOS_macOS_20260901/03_AppReview审核备注_直接粘贴.md
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 4c9fa48b4f235200f12840ea9d8d750869e9cc232fc1c2123cfa7df7f0ea43be
+Evidence level: pre-existing local document; submission not verified
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 35
+
+```text
+0001  # App Review 审核备注 · 直接粘贴
+0002  
+0003  ## 英文审核备注
+0004  
+0005  ```text
+0006  Key Planet is a paid-upfront app. All 32 training and game modes are available immediately after download. There are no in-app purchases, subscriptions, paid unlocks, advertisements, or third-party analytics.
+0007  
+0008  No demo account is required. The app works offline. Game Center is optional and handled by Apple. The current release does not use iCloud or CloudKit.
+0009  
+0010  Suggested iOS/iPadOS review paths:
+0011  1. Home > Learning Journey: skip or complete placement, open the first available lesson, enter text, and view the result with next-step guidance.
+0012  2. Home > Practice Lab: view weak-key analysis and open a 2-, 3-, or 4-key focused practice. Standard tests offer timed and word-count formats.
+0013  3. Settings > Content Library: view the import template and import/export options.
+0014  4. Home > Parent Center: view local profiles and Today/7 Days/30 Days trends.
+0015  
+0016  Suggested macOS review paths:
+0017  1. Home > Learning Journey: open a lesson and use either the physical or onscreen keyboard.
+0018  2. Home > Practice Lab: open weak-key practice or a standard test.
+0019  3. Settings > Content Library: import or export a text library through the system file picker.
+0020  4. Settings > Sound & Key Feedback: preview and adjust music, key sound, and volume.
+0021  
+0022  Parent-sensitive actions such as profile deletion, report export, and external links use a simple arithmetic gate. The reviewer can solve the equation shown on screen; there is no fixed passcode.
+0023  
+0024  Learning profiles, practice history, key-performance analysis, imported content, personal-best ghosts, and reports are stored and processed on device. Exported reports do not include Apple ID, Game Center ID, device identifiers, or real birth dates.
+0025  
+0026  The 21 mythical celebrations are selected automatically from score and combo milestones during normal play. The Debug-only preview gallery is not included in Release builds.
+0027  
+0028  The latest build identifies the physical period key by hardware key code across input sources while preserving the semantic difference between the Chinese full stop “。” and the English period “.”. It also adds the macOS user-selected file read/write sandbox entitlement required by Content Library import/export.
+0029  
+0030  Contact: [REDACTED: contact email]
+0031  ```
+0032  
+0033  ## 中文核对说明（不要粘贴到英文 Notes）
+0034  
+0035  - 不需要演示账号，也没有固定家长密码。
+```

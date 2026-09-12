@@ -1,0 +1,71 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S14  CloudKit private or shared database selection
+
+Project key: huadian
+Original relative path: HuaDianLedger/Stores/LedgerCloudTransport.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 09e062cb6b0816f34879569a824953bc335bafa742393969efd5a398b8d6cf7a
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 55
+
+```text
+0001  import Foundation
+0002  import CloudKit
+0003  
+0004  struct LedgerCloudAddress: Codable, Equatable, Identifiable {
+0005      var rootName: String
+0006      var zoneName: String = "HuaDianLedgerV2"
+0007      var ownerName: String = CKCurrentUserDefaultName
+0008      var shared = false
+0009      var id: String { ownerName + "/" + zoneName + "/" + rootName }
+0010      var zoneID: CKRecordZone.ID { .init(zoneName: zoneName, ownerName: ownerName) }
+0011      var rootID: CKRecord.ID { .init(recordName: rootName, zoneID: zoneID) }
+0012      static let personal = Self(rootName: "personal-root")
+0013  }
+0014  
+0015  struct LedgerCloudSnapshot {
+0016      var root: CKRecord?
+0017      var manifest: [String: String]
+0018      var document: LedgerSyncDocument
+0019  }
+0020  
+0021  /// Immutable revision parts + a conditional root commit. Readers only
+0022  /// see a complete manifest; a failed/interrupted batch never exposes half of a
+0023  /// transaction or a partially uploaded backup.
+0024  actor LedgerCloudTransport {
+0025      static let containerID = "iCloud.com.huadians"
+0026      private lazy var container = CKContainer(identifier: Self.containerID)
+0027      private func database(_ address: LedgerCloudAddress) -> CKDatabase {
+0028          address.shared ? container.sharedCloudDatabase : container.privateCloudDatabase
+0029      }
+0030      func identity() async throws -> String {
+0031          #if DEBUG
+0032          guard Bundle.main.bundleIdentifier == "com.huadians" else { throw LedgerPlusError.invalid("此独立验收副本未配置 iCloud 签名，不能访问云端。请使用已启用 CloudKit 能力的开发签名版本进行双设备验证。") }
+0033          #endif
+0034          // CloudKit login is independent of the iCloud Drive Documents token.
+0035          // Only CKContainer.accountStatus determines account availability here.
+0036          let status = try await LedgerCloudRecovery.read(stage: "account-status") {
+0037              let value = try await self.container.accountStatus()
+0038              if value == .temporarilyUnavailable || value == .couldNotDetermine { throw CKError(.accountTemporarilyUnavailable) }
+0039              return value
+0040          }
+0041          guard status == .available else {
+0042              throw CKError(status == .restricted ? .managedAccountRestricted : .notAuthenticated)
+0043          }
+0044          let recordID = try await LedgerCloudRecovery.read(stage: "user-identity") { try await self.container.userRecordID() }
+0045          // Never reuse an account baseline across Development and Production.
+0046          return LedgerCloudEnvironment.name + "/" + recordID.recordName
+0047      }
+0048  
+0049      /// No ledger upload and no share creation; safe for an explicit connection check.
+0050      func checkConnection() async throws {
+0051          _ = try await identity()
+0052          _ = try await LedgerCloudRecovery.read(stage: "private-database-check") { try await self.container.privateCloudDatabase.allRecordZones() }
+0053      }
+0054      func fetch(_ address: LedgerCloudAddress) async throws -> LedgerCloudSnapshot {
+0055          try Task.checkCancellation()
+```

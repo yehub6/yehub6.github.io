@@ -1,0 +1,102 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S08  DNS TCP and TLS diagnostic implementations
+
+Project key: vpn
+Original relative path: ConfigStudio/NetworkChecks/NetworkCheckServices.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 18b76ffb1c396aacd39fe050153fbb168c5d545afba06890c8266b6a3ff7fa8a
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 86
+
+```text
+0001  import Foundation
+0002  import Network
+0003  import Security
+0004  
+0005  struct DNSLookupResult { var ipv4: [String]; var ipv6: [String]; var duration: TimeInterval }
+0006  struct TCPCheckResult { var reachable: Bool; var duration: TimeInterval; var error: String? }
+0007  struct TLSCertificateResult {
+0008      var subject: String; var issuer: String; var validFrom: Date?; var validUntil: Date?; var remainingDays: Int?
+0009      var domainMatches: Bool; var trusted: Bool; var chainSummary: [String]
+0010  }
+0011  
+0012  protocol DNSLookupService { func lookup(host: String) async throws -> DNSLookupResult }
+0013  protocol TCPPortCheckService { func check(host: String, port: Int, timeout: TimeInterval) async throws -> TCPCheckResult }
+0014  protocol TLSCertificateCheckService { func check(host: String, port: Int, timeout: TimeInterval) async throws -> TLSCertificateResult }
+0015  
+0016  struct LocalDNSLookupService: DNSLookupService {
+0017      func lookup(host: String) async throws -> DNSLookupResult {
+0018          try await withCheckedThrowingContinuation { continuation in
+0019              DispatchQueue.global(qos: .userInitiated).async {
+0020                  let start = Date(); var hints = addrinfo(ai_flags: AI_ADDRCONFIG, ai_family: AF_UNSPEC, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
+0021                  var result: UnsafeMutablePointer<addrinfo>?
+0022                  guard getaddrinfo(host, nil, &hints, &result) == 0, let first = result else { continuation.resume(throwing: AppError.dnsFailure); return }
+0023                  defer { freeaddrinfo(result) }
+0024                  var ipv4: [String] = [], ipv6: [String] = [], pointer: UnsafeMutablePointer<addrinfo>? = first
+0025                  while let info = pointer?.pointee {
+0026                      var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+0027                      if getnameinfo(info.ai_addr, info.ai_addrlen, &buffer, socklen_t(buffer.count), nil, 0, NI_NUMERICHOST) == 0 {
+0028                          let value = String(cString: buffer)
+0029                          if info.ai_family == AF_INET { ipv4.append(value) } else if info.ai_family == AF_INET6 { ipv6.append(value) }
+0030                      }
+0031                      pointer = info.ai_next
+0032                  }
+0033                  continuation.resume(returning: DNSLookupResult(ipv4: Array(Set(ipv4)).sorted(), ipv6: Array(Set(ipv6)).sorted(), duration: Date().timeIntervalSince(start)))
+0034              }
+0035          }
+0036      }
+0037  }
+0038  
+0039  private final class CompletionGate<Value>: @unchecked Sendable {
+0040      private let lock = NSLock(); private var completed = false
+0041      func finish(_ block: () -> Void) { lock.lock(); defer { lock.unlock() }; guard !completed else { return }; completed = true; block() }
+0042  }
+0043  
+0044  struct LocalTCPPortCheckService: TCPPortCheckService {
+0045      func check(host: String, port: Int, timeout: TimeInterval = 5) async throws -> TCPCheckResult {
+0046          guard let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) else { throw AppError.invalidPort }
+0047          return try await withCheckedThrowingContinuation { continuation in
+0048              let start = Date(), connection = NWConnection(host: NWEndpoint.Host(host), port: nwPort, using: .tcp), gate = CompletionGate<TCPCheckResult>()
+0049              connection.stateUpdateHandler = { state in
+0050                  switch state {
+0051                  case .ready: gate.finish { continuation.resume(returning: .init(reachable: true, duration: Date().timeIntervalSince(start), error: nil)); connection.cancel() }
+0052                  case .failed(let error): gate.finish { continuation.resume(returning: .init(reachable: false, duration: Date().timeIntervalSince(start), error: SecureLogger.redact(error.localizedDescription))); connection.cancel() }
+0053                  default: break
+0054                  }
+0055              }
+0056              connection.start(queue: .global(qos: .userInitiated))
+0057              DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { gate.finish { connection.cancel(); continuation.resume(throwing: AppError.tcpTimeout) } }
+0058          }
+0059      }
+0060  }
+0061  
+0062  struct LocalTLSCertificateCheckService: TLSCertificateCheckService {
+0063      func check(host: String, port: Int = 443, timeout: TimeInterval = 8) async throws -> TLSCertificateResult {
+0064          guard let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) else { throw AppError.invalidPort }
+0065          return try await withCheckedThrowingContinuation { continuation in
+0066              let tls = NWProtocolTLS.Options(), gate = CompletionGate<TLSCertificateResult>()
+0067              sec_protocol_options_set_tls_server_name(tls.securityProtocolOptions, host)
+0068              sec_protocol_options_set_verify_block(tls.securityProtocolOptions, { _, trustObject, complete in
+0069                  let trust = sec_trust_copy_ref(trustObject).takeRetainedValue()
+0070                  SecTrustSetPolicies(trust, SecPolicyCreateSSL(true, host as CFString))
+0071                  var error: CFError?; let trusted = SecTrustEvaluateWithError(trust, &error)
+0072                  let result = certificateResult(trust: trust, trusted: trusted)
+0073                  complete(trusted)
+0074                  gate.finish { continuation.resume(returning: result) }
+0075              }, .global(qos: .userInitiated))
+0076              let parameters = NWParameters(tls: tls, tcp: NWProtocolTCP.Options())
+0077              let connection = NWConnection(host: NWEndpoint.Host(host), port: nwPort, using: parameters)
+0078              connection.stateUpdateHandler = { state in
+0079                  if case .failed = state { gate.finish { continuation.resume(throwing: AppError.tlsFailure) } }
+0080                  if case .ready = state { connection.cancel() }
+0081              }
+0082              connection.start(queue: .global(qos: .userInitiated))
+0083              DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { gate.finish { connection.cancel(); continuation.resume(throwing: AppError.tlsFailure) } }
+0084          }
+0085      }
+0086  }
+```

@@ -1,0 +1,106 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S02  Sample state versus normal project loading
+
+Project key: vidma
+Original relative path: Vidma/App/AppModel.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: dd06340be12c01be850fb17f787606c30e26ae2da7826539ed3659aee4e6f7e9
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 43 to 132
+
+```text
+0043      func load() async {
+0044          do {
+0045              if MarketingCaptureSeed.isEnabled {
+0046                  let project = MarketingCaptureSeed.makeProject()
+0047                  projects = [project]
+0048                  activeProject = project
+0049                  appearance = .dark
+0050                  favorites = [.allInOne, .subtitles, .pictureInPicture, .convert]
+0051                  recentTools = [.allInOne, .subtitles, .pictureInPicture, .mosaic]
+0052                  tasks = []
+0053                  let arguments = ProcessInfo.processInfo.arguments
+0054                  if arguments.contains("-marketing-capture-tools") {
+0055                      selectedTab = 1
+0056                  } else if arguments.contains("-marketing-capture-export") {
+0057                      navigationPath.append(Route.export(project.id))
+0058                  } else if arguments.contains("-marketing-capture-editor") ||
+0059                              arguments.contains("-marketing-capture-layer") ||
+0060                              arguments.contains("-marketing-capture-subtitle") {
+0061                      navigationPath.append(Route.editor(project.id))
+0062                  } else {
+0063                      selectedTab = 0
+0064                  }
+0065                  return
+0066              }
+0067              if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
+0068                  if ProcessInfo.processInfo.arguments.contains("-ui-testing-empty-creator") {
+0069                      projects = []; tasks = []; return
+0070                  }
+0071                  var project = VideoProject(name: "UI Test Project")
+0072                  if ProcessInfo.processInfo.arguments.contains("-ui-testing-layer-editor"),
+0073                     let module = registry.module(for: .allInOne) {
+0074                      let video = ProjectAsset(kind: .video, localRelativePath: "missing-ui-test-video.mp4", displayName: "Timeline Video", metadata: MediaMetadata(duration: 5, width: 1280, height: 720, nominalFrameRate: 30, fileSize: 4_096, isHDR: false))
+0075                      let audio = ProjectAsset(kind: .audio, localRelativePath: "missing-ui-test-audio.m4a", displayName: "Timeline Audio", metadata: MediaMetadata(duration: 5, width: 0, height: 0, nominalFrameRate: 0, fileSize: 1_024, isHDR: false))
+0076                      project = VideoProject(
+0077                          name: "UI Test Project",
+0078                          assets: [video, audio],
+0079                          clips: [VideoClip(assetID: video.id, sourceStart: 0, sourceDuration: 5, timelineStart: 0)],
+0080                          audioClips: [AudioClip(assetID: audio.id, sourceStart: 0, duration: 5, timelineStart: 0, volume: 1, fadeIn: 0, fadeOut: 0)],
+0081                          overlays: [
+0082                              OverlayItem(kind: .text, text: "Canvas Text", start: 0, duration: 5, normalizedX: 0.2, normalizedY: 0.3, normalizedWidth: 0.6, normalizedHeight: 0.2, zIndex: 20, subtitleStyle: .standard, name: "Text Layer"),
+0083                              OverlayItem(kind: .mosaicMask, start: 0, duration: 5, normalizedX: 0.35, normalizedY: 0.2, normalizedWidth: 0.3, normalizedHeight: 0.3, zIndex: 10, name: "Mosaic Layer")
+0084                          ],
+0085                          modules: [ProjectModule(moduleID: .allInOne, parameters: module.defaultParameters)],
+0086                          canvasWidth: 1280,
+0087                          canvasHeight: 720,
+0088                          frameRate: 30
+0089                      )
+0090                  } else if ProcessInfo.processInfo.arguments.contains("-ui-testing-subtitle-editor"),
+0091                     let module = registry.module(for: .subtitles) {
+0092                      project.canvasWidth = 1080
+0093                      project.canvasHeight = 1920
+0094                      project.modules = [ProjectModule(moduleID: .subtitles, parameters: module.defaultParameters)]
+0095                      project.overlays = [
+0096                          OverlayItem(
+0097                              kind: .subtitle,
+0098                              text: "A sample caption",
+0099                              start: 0,
+0100                              duration: 2.5,
+0101                              normalizedX: 0.08,
+0102                              normalizedY: 0.76,
+0103                              normalizedWidth: 0.84,
+0104                              normalizedHeight: 0.16,
+0105                              zIndex: 300,
+0106                              subtitleStyle: .standard
+0107                          )
+0108                      ]
+0109                  } else if ProcessInfo.processInfo.arguments.contains("-ui-testing-speech-preflight"),
+0110                     let module = registry.module(for: .subtitles) {
+0111                      let asset = ProjectAsset(
+0112                          kind: .video,
+0113                          localRelativePath: "missing-ui-test-video.mp4",
+0114                          displayName: "Speech Test.mp4",
+0115                          metadata: MediaMetadata(duration: 5, width: 1280, height: 720, nominalFrameRate: 30, fileSize: 1_024, isHDR: false)
+0116                      )
+0117                      project = VideoProject(name: "UI Test Project", assets: [asset], modules: [ProjectModule(moduleID: .subtitles, parameters: module.defaultParameters)])
+0118                  } else if ProcessInfo.processInfo.arguments.contains("-ui-testing-seeded-module"),
+0119                     let module = registry.module(for: .trim) {
+0120                      project.modules = [ProjectModule(moduleID: .trim, parameters: module.defaultParameters)]
+0121                  }
+0122                  projects = [project]
+0123                  tasks = []
+0124                  return
+0125              }
+0126              projects = try await repository.loadAll()
+0127              favorites = Set(UserDefaults.standard.stringArray(forKey: "favoriteTools")?.compactMap(VideoToolID.init(rawValue:)) ?? [])
+0128              recentTools = UserDefaults.standard.stringArray(forKey: "recentTools")?.compactMap(VideoToolID.init(rawValue:)) ?? []
+0129              appearance = AppAppearance(rawValue: UserDefaults.standard.string(forKey: "appearance") ?? "system") ?? .system
+0130              tasks = await taskQueue.snapshot()
+0131          } catch {
+0132              alert = AppError.wrap(error, context: "load projects")
+```

@@ -1,0 +1,56 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# D06  Local development and release identity explanation
+
+Project key: huadian
+Original relative path: Verification/serverless-apple-capabilities.md
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 985bdbfa3e89dc1498d38306bd8032baa38950e6e0ba41228f9b56e967154ca5
+Evidence level: pre-existing local document; submission not verified
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 40
+
+```text
+0001  # 无服务器扩展：Apple 能力与发布前验收
+0002  
+0003  更新：2026-09-08。工程配置已添加，未操作生产 CloudKit 数据，未上传送审。
+0004  
+0005  ## 正式版与开发测试版身份
+0006  
+0007  | Target / 能力 | Release / 正式 | Debug / 测试 |
+0008  |---|---|---|
+0009  | HuaDianLedger / HuaDianLedgerMac | com.huadian | com.huadians |
+0010  | HuaDianWidgets / HuaDianWidgetsMac | com.huadian.widgets | com.huadians.widgets |
+0011  | HuaDianShare | com.huadian.share | com.huadians.share |
+0012  | App Group | group.com.huadian.shared | group.com.huadians.shared |
+0013  | CloudKit 容器 | iCloud.com.huadians | iCloud.com.huadians |
+0014  | CloudKit 环境 | Production | Development |
+0015  | URL scheme | huadian | huadians |
+0016  
+0017  本机工程暂保留开发团队 `[REDACTED: development team]`；旧资料曾提示该团队不拥有正式 App ID，不能把这个值当作已确认的发布团队。送审电脑必须选择真正拥有 `com.huadian` 的团队，并同步主 App / 扩展能力与描述文件。扩展版本与各自主应用一致，不新建替代主 App ID，也不要把隔离测试 ID 用于发布。
+0018  
+0019  用户于 2026-09-08 最终确定以上双身份配置，覆盖同日早先“所有配置都用正式 ID / 保留同一个 App Group”的临时方案。历史 `com.huadians` 真机日志仍只代表测试身份的当时结果。Run 选择 Debug，Archive 选择 Release；运行时读取 Info.plist 中与 entitlement 同源的 App Group 和 URL 配置，不使用另一身份的兜底容器。
+0020  
+0021  ## 在开发者账号 / Xcode 中核对
+0022  
+0023  1. 两个平台按 Debug / Release 使用上表对应主 ID，共用 CloudKit 容器 `iCloud.com.huadians`。Key-Value Store 仍使用 `$(TeamIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)`，因此正式与测试手动备份分属不同命名空间；它不是 CloudKit 容器，也不跟随 CloudKit 的 Development / Production 切换。
+0024  2. 正式主 App 和对应扩展关联 `group.com.huadian.shared`；测试主 App 和对应扩展关联 `group.com.huadians.shared`。五份 entitlement 使用 `$(HUADIAN_APP_GROUP)`，五个 Target 的 Debug / Release 分别设置实际组名。发布团队必须有权使用所选组和共用云容器；仅在代码中写入标识不代表后台已注册或授权。
+0025  3. 注册新扩展 ID，刷新开发与发行描述文件。确认签名后的主程序和扩展实际包含相应 entitlement，而不只是工程文件里存在。
+0026  4. macOS 主 App 保留沙盒，并允许网络客户端访问。分享图片及文件使用用户选择权限。
+0027  5. 工程已加入 `CKSharingSupported`、CloudKit 邀请回调和主 App URL scheme；无需自建服务器、API 密钥或第三方登录。
+0028  
+0029  官方参考：[App Groups 配置](https://developer.apple.com/documentation/xcode/configuring-app-groups)、[CloudKit 共享](https://developer.apple.com/documentation/cloudkit/sharing-cloudkit-data-with-other-icloud-users)。
+0030  
+0031  ## CloudKit 开发环境
+0032  
+0033  先在 Development 环境用开发签名验证，不直接修改 Production 用户数据。正式和测试可共用一个 CloudKit 容器，但实际隔离由最终签名中的环境决定。TestFlight / App Store 不能使用 Development；不要将这里的 Debug 测试身份直接当作 TestFlight 配置。若两套身份都接入同一容器的 Production 且登录同一 iCloud 账号，它们可以访问同一套云端账本，不能再声称相互隔离。
+0034  
+0035  旧正式构建若曾使用测试 App Group，组内摘要 / 待识别图片不会自动进入新正式组；主 App 本地账本未改动。先完成旧版待识别图片并导出完整备份；新正式版打开后会重新生成自己的小组件摘要，不跨组自动复制用户资料。
+0036  
+0037  2026-09-08 连接修复补充：两个主 Target 已通过 `HUADIAN_CLOUD_ENVIRONMENT` 明确区分 Debug / Development 与 Release / Production，并写入实际签名 entitlement。同步开关和合并基线按环境隔离，旧未标明环境的同步需用户重新确认。iPhone 开发签名版已通过账号、用户标识和私有数据库只读检查；不等同于共享邀请或生产环境通过。详情见 `family-sharing-repair-2026-09-08.md`。
+0038  
+0039  - 自定义 zone：`HuaDianLedgerV2`。
+0040  - 个人根记录名：`personal-root`。
+```

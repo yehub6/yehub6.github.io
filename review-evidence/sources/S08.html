@@ -1,0 +1,86 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S08 · DNS TCP and TLS diagnostic implementations · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S08</p><h1>S08 · VPN TP</h1><p class="lead" lang="en">DNS TCP and TLS diagnostic implementations</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vpn-tp.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S08.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: vpn<br>Original relative path: ConfigStudio/NetworkChecks/NetworkCheckServices.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 18b76ffb1c396aacd39fe050153fbb168c5d545afba06890c8266b6a3ff7fa8a<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 86</h2><pre class="source-code"><code>0001  import Foundation
+0002  import Network
+0003  import Security
+0004  
+0005  struct DNSLookupResult { var ipv4: [String]; var ipv6: [String]; var duration: TimeInterval }
+0006  struct TCPCheckResult { var reachable: Bool; var duration: TimeInterval; var error: String? }
+0007  struct TLSCertificateResult {
+0008      var subject: String; var issuer: String; var validFrom: Date?; var validUntil: Date?; var remainingDays: Int?
+0009      var domainMatches: Bool; var trusted: Bool; var chainSummary: [String]
+0010  }
+0011  
+0012  protocol DNSLookupService { func lookup(host: String) async throws -&gt; DNSLookupResult }
+0013  protocol TCPPortCheckService { func check(host: String, port: Int, timeout: TimeInterval) async throws -&gt; TCPCheckResult }
+0014  protocol TLSCertificateCheckService { func check(host: String, port: Int, timeout: TimeInterval) async throws -&gt; TLSCertificateResult }
+0015  
+0016  struct LocalDNSLookupService: DNSLookupService {
+0017      func lookup(host: String) async throws -&gt; DNSLookupResult {
+0018          try await withCheckedThrowingContinuation { continuation in
+0019              DispatchQueue.global(qos: .userInitiated).async {
+0020                  let start = Date(); var hints = addrinfo(ai_flags: AI_ADDRCONFIG, ai_family: AF_UNSPEC, ai_socktype: SOCK_STREAM, ai_protocol: 0, ai_addrlen: 0, ai_canonname: nil, ai_addr: nil, ai_next: nil)
+0021                  var result: UnsafeMutablePointer&lt;addrinfo&gt;?
+0022                  guard getaddrinfo(host, nil, &amp;hints, &amp;result) == 0, let first = result else { continuation.resume(throwing: AppError.dnsFailure); return }
+0023                  defer { freeaddrinfo(result) }
+0024                  var ipv4: [String] = [], ipv6: [String] = [], pointer: UnsafeMutablePointer&lt;addrinfo&gt;? = first
+0025                  while let info = pointer?.pointee {
+0026                      var buffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+0027                      if getnameinfo(info.ai_addr, info.ai_addrlen, &amp;buffer, socklen_t(buffer.count), nil, 0, NI_NUMERICHOST) == 0 {
+0028                          let value = String(cString: buffer)
+0029                          if info.ai_family == AF_INET { ipv4.append(value) } else if info.ai_family == AF_INET6 { ipv6.append(value) }
+0030                      }
+0031                      pointer = info.ai_next
+0032                  }
+0033                  continuation.resume(returning: DNSLookupResult(ipv4: Array(Set(ipv4)).sorted(), ipv6: Array(Set(ipv6)).sorted(), duration: Date().timeIntervalSince(start)))
+0034              }
+0035          }
+0036      }
+0037  }
+0038  
+0039  private final class CompletionGate&lt;Value&gt;: @unchecked Sendable {
+0040      private let lock = NSLock(); private var completed = false
+0041      func finish(_ block: () -&gt; Void) { lock.lock(); defer { lock.unlock() }; guard !completed else { return }; completed = true; block() }
+0042  }
+0043  
+0044  struct LocalTCPPortCheckService: TCPPortCheckService {
+0045      func check(host: String, port: Int, timeout: TimeInterval = 5) async throws -&gt; TCPCheckResult {
+0046          guard let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) else { throw AppError.invalidPort }
+0047          return try await withCheckedThrowingContinuation { continuation in
+0048              let start = Date(), connection = NWConnection(host: NWEndpoint.Host(host), port: nwPort, using: .tcp), gate = CompletionGate&lt;TCPCheckResult&gt;()
+0049              connection.stateUpdateHandler = { state in
+0050                  switch state {
+0051                  case .ready: gate.finish { continuation.resume(returning: .init(reachable: true, duration: Date().timeIntervalSince(start), error: nil)); connection.cancel() }
+0052                  case .failed(let error): gate.finish { continuation.resume(returning: .init(reachable: false, duration: Date().timeIntervalSince(start), error: SecureLogger.redact(error.localizedDescription))); connection.cancel() }
+0053                  default: break
+0054                  }
+0055              }
+0056              connection.start(queue: .global(qos: .userInitiated))
+0057              DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { gate.finish { connection.cancel(); continuation.resume(throwing: AppError.tcpTimeout) } }
+0058          }
+0059      }
+0060  }
+0061  
+0062  struct LocalTLSCertificateCheckService: TLSCertificateCheckService {
+0063      func check(host: String, port: Int = 443, timeout: TimeInterval = 8) async throws -&gt; TLSCertificateResult {
+0064          guard let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) else { throw AppError.invalidPort }
+0065          return try await withCheckedThrowingContinuation { continuation in
+0066              let tls = NWProtocolTLS.Options(), gate = CompletionGate&lt;TLSCertificateResult&gt;()
+0067              sec_protocol_options_set_tls_server_name(tls.securityProtocolOptions, host)
+0068              sec_protocol_options_set_verify_block(tls.securityProtocolOptions, { _, trustObject, complete in
+0069                  let trust = sec_trust_copy_ref(trustObject).takeRetainedValue()
+0070                  SecTrustSetPolicies(trust, SecPolicyCreateSSL(true, host as CFString))
+0071                  var error: CFError?; let trusted = SecTrustEvaluateWithError(trust, &amp;error)
+0072                  let result = certificateResult(trust: trust, trusted: trusted)
+0073                  complete(trusted)
+0074                  gate.finish { continuation.resume(returning: result) }
+0075              }, .global(qos: .userInitiated))
+0076              let parameters = NWParameters(tls: tls, tcp: NWProtocolTCP.Options())
+0077              let connection = NWConnection(host: NWEndpoint.Host(host), port: nwPort, using: parameters)
+0078              connection.stateUpdateHandler = { state in
+0079                  if case .failed = state { gate.finish { continuation.resume(throwing: AppError.tlsFailure) } }
+0080                  if case .ready = state { connection.cancel() }
+0081              }
+0082              connection.start(queue: .global(qos: .userInitiated))
+0083              DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { gate.finish { connection.cancel(); continuation.resume(throwing: AppError.tlsFailure) } }
+0084          }
+0085      }
+0086  }</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

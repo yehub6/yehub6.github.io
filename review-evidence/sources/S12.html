@@ -1,0 +1,31 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S12 · On-device Vision OCR · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S12</p><h1>S12 · 轻扫PDF / Scanly PDF</h1><p class="lead" lang="en">On-device Vision OCR</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../scanly-pdf.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S12.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: scan<br>Original relative path: ScanlyPDF/Services/OCRService.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 4466d6c697543b42c508f5baf27ba70a6c722b892e0826047c2519b32f9f10c3<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 31</h2><pre class="source-code"><code>0001  import PDFKit
+0002  import UIKit
+0003  import Vision
+0004  
+0005  actor OCRService {
+0006      struct PageResult: Identifiable, Sendable { let id: Int; let text: String }
+0007      struct LayoutPageResult: Identifiable, Sendable { let id: Int; let observations: [TextObservation] }
+0008      struct TextObservation: Identifiable, Sendable {
+0009          let id = UUID()
+0010          let text: String
+0011          /// Top-left normalized coordinates, matching the paper editor model.
+0012          let rect: CGRect
+0013      }
+0014  
+0015      func recognize(image: UIImage, languages: [String] = [&quot;zh-Hans&quot;, &quot;zh-Hant&quot;, &quot;en-US&quot;, &quot;ja-JP&quot;, &quot;ko-KR&quot;, &quot;es-ES&quot;, &quot;fr-FR&quot;, &quot;de-DE&quot;]) async throws -&gt; String {
+0016          guard let cgImage = image.cgImage else { throw AppError.invalidFile }
+0017          return try await withCheckedThrowingContinuation { continuation in
+0018              let request = VNRecognizeTextRequest { request, error in
+0019                  if let error { continuation.resume(throwing: error); return }
+0020                  let text = (request.results as? [VNRecognizedTextObservation])?.compactMap { $0.topCandidates(1).first?.string }.joined(separator: &quot;\n&quot;) ?? &quot;&quot;
+0021                  continuation.resume(returning: text)
+0022              }
+0023              request.recognitionLevel = .accurate
+0024              request.usesLanguageCorrection = true
+0025              let supported = (try? request.supportedRecognitionLanguages()) ?? []
+0026              request.recognitionLanguages = languages.filter(supported.contains)
+0027              if request.recognitionLanguages.isEmpty { request.recognitionLanguages = Array(supported.prefix(3)) }
+0028              do { try VNImageRequestHandler(cgImage: cgImage).perform([request]) }
+0029              catch { continuation.resume(throwing: error) }
+0030          }
+0031      }</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

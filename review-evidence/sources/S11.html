@@ -1,0 +1,75 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S11 · ECB data request XML parsing and cache fallback · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S11</p><h1>S11 · 计算器 - 高精度计算工作台</h1><p class="lead" lang="en">ECB data request XML parsing and cache fallback</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../calculator.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S11.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: calc<br>Original relative path: Packages/PrecisionCalcKit/Sources/CalcSystemIntegration/SystemIntegration.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 1fb932a35430ec0bec8fc612bbbb251283e749c30dad8df59702221fc951a623<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 76 to 150</h2><pre class="source-code"><code>0076      public let source: String
+0077      public let baseCurrency: String
+0078      public let rates: [String: BigDecimal]
+0079      public let retrievedAt: Date
+0080  
+0081      public init(date: Date, source: String, baseCurrency: String = &quot;EUR&quot;, rates: [String: BigDecimal], retrievedAt: Date = Date()) {
+0082          self.date = date; self.source = source; self.baseCurrency = baseCurrency; self.rates = rates; self.retrievedAt = retrievedAt
+0083      }
+0084  }
+0085  
+0086  public protocol ExchangeRateProvider: Sendable { func latestRates() async throws -&gt; ExchangeRateSnapshot }
+0087  
+0088  public enum ExchangeRateError: Error, Sendable, Hashable, LocalizedError {
+0089      case invalidResponse, missingCurrency(String), invalidXML, noCache
+0090      public var errorDescription: String? {
+0091          switch self { case .invalidResponse: &quot;汇率服务响应无效&quot;; case .missingCurrency(let code): &quot;参考源没有提供 \(code) 汇率&quot;; case .invalidXML: &quot;无法解析参考汇率数据&quot;; case .noCache: &quot;没有可用的本地汇率快照&quot; }
+0092      }
+0093  }
+0094  
+0095  public struct ECBExchangeRateProvider: ExchangeRateProvider {
+0096      public let endpoint: URL
+0097      public let session: URLSession
+0098      public init(endpoint: URL = URL(string: &quot;https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml&quot;) ?? URL(fileURLWithPath: &quot;/invalid-ecb-endpoint&quot;), session: URLSession = .shared) { self.endpoint = endpoint; self.session = session }
+0099  
+0100      public func latestRates() async throws -&gt; ExchangeRateSnapshot {
+0101          var request = URLRequest(url: endpoint, timeoutInterval: 10)
+0102          request.setValue(&quot;PrecisionCalc/1.0&quot;, forHTTPHeaderField: &quot;User-Agent&quot;)
+0103          let (data, response) = try await session.data(for: request)
+0104          guard let http = response as? HTTPURLResponse, (200..&lt;300).contains(http.statusCode) else { throw ExchangeRateError.invalidResponse }
+0105          return try Self.parse(data)
+0106      }
+0107  
+0108      public static func parse(_ data: Data) throws -&gt; ExchangeRateSnapshot {
+0109          let delegate = ECBParserDelegate()
+0110          let parser = XMLParser(data: data)
+0111          parser.delegate = delegate
+0112          guard parser.parse(), !delegate.rates.isEmpty else { throw ExchangeRateError.invalidXML }
+0113          var rates = delegate.rates
+0114          rates[&quot;EUR&quot;] = .one
+0115          return ExchangeRateSnapshot(date: delegate.date ?? Date(), source: &quot;European Central Bank&quot;, rates: rates)
+0116      }
+0117  }
+0118  
+0119  private final class ECBParserDelegate: NSObject, XMLParserDelegate, @unchecked Sendable {
+0120      var rates: [String: BigDecimal] = [:]
+0121      var date: Date?
+0122      func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
+0123          if let value = attributeDict[&quot;time&quot;] { date = ISO8601DateFormatter.precisionCalcDay.date(from: value) }
+0124          if let currency = attributeDict[&quot;currency&quot;], let rate = attributeDict[&quot;rate&quot;], let decimal = try? BigDecimal(parsing: rate) { rates[currency] = decimal }
+0125      }
+0126  }
+0127  
+0128  public actor CachedExchangeRateProvider: ExchangeRateProvider {
+0129      private let upstream: any ExchangeRateProvider
+0130      private let defaults: UserDefaults
+0131      private let key = &quot;precisioncalc.exchange-rate.snapshot&quot;
+0132      public init(upstream: any ExchangeRateProvider, suiteName: String = &quot;group.com.calculatorx.shared&quot;) {
+0133          self.upstream = upstream
+0134          self.defaults = UserDefaults(suiteName: suiteName) ?? .standard
+0135      }
+0136      public func latestRates() async throws -&gt; ExchangeRateSnapshot {
+0137          do {
+0138              let snapshot = try await upstream.latestRates()
+0139              if let data = try? JSONEncoder().encode(snapshot) { defaults.set(data, forKey: key) }
+0140              return snapshot
+0141          } catch {
+0142              guard let data = defaults.data(forKey: key), let snapshot = try? JSONDecoder().decode(ExchangeRateSnapshot.self, from: data) else { throw error }
+0143              return snapshot
+0144          }
+0145      }
+0146  }
+0147  
+0148  public struct BundledSnapshotProvider: ExchangeRateProvider {
+0149      public init() {}
+0150      public func latestRates() async throws -&gt; ExchangeRateSnapshot {</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

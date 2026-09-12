@@ -1,0 +1,49 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# D04  Local review-note document not proof of submission
+
+Project key: scan
+Original relative path: Submission/AppReviewNotes.md
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: e58b2995b417a6c33c9fd6bb384c5c9cbd3aba2ed9657d93e1754d7fa506fddb
+Evidence level: pre-existing local document; submission not verified
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 33
+
+```text
+0001  # App Review Notes
+0002  
+0003  ## English — paste into App Review Information
+0004  
+0005  Scanly PDF requires no account or login. This version contains no in-app purchases or paywalls. It uses Google Mobile Ads for clearly labeled banner, native, interstitial, and app-open ads. For returning users who have completed onboarding, a cold launch may show one app-open ad from the Scanly PDF loading screen; if consent, network, or ad fill is unavailable, the loading screen releases after at most five seconds. The ad is never presented late over interactive main content, and inline ads are not loaded underneath it. Home contains one standard native placement, Tools contains one compact 160-point native placement between tool groups, and Files and Settings each contain one standard 320×50 banner within scrollable content. These placements scroll with their content and are not anchored over controls or the tab bar. The Files banner is omitted during batch selection and the Tools native ad is omitted while searching. Scanner, PDF editor, Paper Signing editor, and export screens contain no ads. Where applicable, the app presents Google UMP consent first and then Apple's ATT prompt. If tracking is allowed and the required regional consent exists, the ad SDK may use IDFA for personalized advertising and measurement. If denied, ads can still appear without IDFA and no feature is restricted. Ads never receive document contents.
+0006  
+0007  Suggested review path:
+0008  1. On Home, tap “Scan New Document” on a physical iPhone, or use Files/Photos import in Simulator.
+0009  2. Open Tools to see 29 working entries. In addition to merge, split, page management, conversion, OCR, compression, watermark, signature, and PDF security, the new entries include permanent redaction, reflow reading, smart forms, PDF comparison, special scan modes, image/link editing, outlines/read aloud, batch processing, saved workflows, receipt extraction, and an on-device document assistant.
+0010  3. Open Paper Signing from Home. After the one-time authorized-use notice, import a non-sensitive sample PDF/image, then add handwriting, text, date, checkmark, personal test signature, or a user-provided non-official image. Tap Final Preview to inspect and export PDF/PNG/JPEG.
+0011  4. Open Apple Ecosystem in Tools to inspect the Share Extension, App Shortcuts, widget links, and optional iCloud Documents sync. Then open Settings to inspect Advertising & Privacy/ATT status, reopen available privacy choices, and test optional Face ID/Touch ID/device-passcode protection, local storage management, the App Store share sheet, rating request, and direct review link.
+0012  
+0013  Documents, OCR text, editable signing drafts, and signing assets are processed locally and are not sent to the advertising SDK. Paper Signing is an editing tool: it does not verify identity, certify legal validity, generate official seals, or derive fingerprint images from Touch ID. Camera scanning requires a supported physical device.
+0014  
+0015  The on-device assistant uses Apple Natural Language APIs and does not upload document text to a developer server. Translation is available on iOS 18 or later through Apple Translation resources and may require the system to download a language model. iCloud sync is off until the user enables it; it uses the user's iCloud Documents container. Items received by the Share Extension are temporarily staged in the shared App Group and removed after a successful import.
+0016  
+0017  The app may also ask for a rating through Apple's official StoreKit system prompt after three successful meaningful operations, such as saving a scan, importing a file, saving a PDF edit, or exporting a signed document. It does not request a rating on first launch, after failed/cancelled work, while scanning or processing, or over a full-screen ad. The app limits automatic requests to once per version and observes a 120-day cooldown across versions. Apple decides whether the system rating sheet is actually displayed.
+0018  
+0019  ## 简体中文备份
+0020  
+0021  轻扫 PDF 不需要账号或登录。当前版本没有 App 内购买或付费墙。App 使用 Google Mobile Ads 展示带明确标识的横幅、原生、插页和开屏广告。已完成引导的回访用户冷启动时，可能从轻扫 PDF 专用启动加载画面展示一次开屏广告；若同意、网络或广告填充不可用，启动画面最多等待 5 秒即进入 App，绝不会在主界面可操作后突然补弹，等待期间也不会在下层加载页面广告。首页放置一条标准原生广告，工具页在工具分组之间放置一条 160pt 紧凑原生广告，文件页和设置页各在可滚动内容中放置一条标准 320×50 横幅。广告随内容滚动，不悬浮覆盖控件或标签栏；文件批量选择时不显示横幅，工具搜索时不显示原生广告。扫描器、PDF 编辑器、纸面签署编辑器和导出页不放广告。在适用地区，App 先展示 Google UMP 同意，再展示 Apple ATT 系统授权；用户允许且所需地区同意有效时，广告 SDK 可能使用 IDFA 进行个性化广告与效果衡量。拒绝后仍可展示不使用 IDFA 的广告，且任何功能都不会受限。广告不会接收文档内容。
+0022  
+0023  建议审核路径：
+0024  1. 在真机首页点“扫描新文档”，或在 Simulator 中使用“文件/照片”导入。
+0025  2. 打开“工具”查看 29 个真实入口。除合并、拆分、页面管理、格式转换、OCR、压缩、水印、签名和 PDF 安全外，新入口还包括永久隐私遮盖、移动重排阅读、智能表单、PDF 版本比较、专项扫描、图片/链接编辑、目录/朗读、批处理、一键工作流、票据结构化和本机文档助手。
+0026  3. 从首页打开“纸面签署”。接受一次性授权说明后，导入不敏感的样例 PDF/图片，添加手写、文字、日期、勾选、个人测试签名或用户自行提供的非官方图片，再打开“最终预览”检查并导出 PDF/PNG/JPEG。
+0027  4. 在“工具 > Apple 生态”查看分享扩展、App Shortcuts、Widget 入口和用户主动开启的 iCloud Documents 同步。再打开“设置”查看“广告与隐私”中的 ATT 状态、重新打开可用的隐私选择，并测试可选 Face ID/Touch ID/设备密码保护、本地存储管理、应用分享面板、评分请求和 App Store 完整评价入口。
+0028  
+0029  文档、OCR 文字、可编辑签署草稿和签署素材均在本机处理，不会发送给广告 SDK。纸面签署仅是编辑工具，不验证身份、不认证法律效力、不生成官方印章，也不会从 Touch ID 获取指纹图像。相机扫描需要受支持的真机。
+0030  
+0031  本机文档助手使用 Apple Natural Language API，不会把文档文字上传到开发者服务器。iOS 18 以上的翻译由 Apple Translation 资源完成，系统可能需要下载语言模型。iCloud 同步默认关闭，仅在用户开启后使用其 iCloud Documents 容器。分享扩展收到的项目会暂存在共享 App Group，成功导入后立即删除暂存副本。
+0032  
+0033  完成三次有效操作（例如保存扫描、导入文件、保存 PDF 编辑或导出签署文档）后，App 可能通过 Apple 官方 StoreKit 系统窗口请求评分。首次启动、操作失败或取消、正在扫描或处理、以及全屏广告显示时不会请求；每个版本最多自动请求一次，跨版本冷却期为 120 天。系统评分窗口是否实际显示由 Apple 决定。
+```

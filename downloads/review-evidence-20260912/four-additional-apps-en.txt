@@ -1,0 +1,60 @@
+FOUR-APP SUPPLEMENT | Public edition | 2026-09-12
+
+The form permits five app entries. The statements below concern the remaining four apps in the same membership appeal. Public availability does not establish submission or acceptance. Private account details are omitted.
+
+计算器 - 高精度计算工作台 | Apple ID 6809879246
+
+This entry concerns the September 11, 2026 account-level Pending Termination Notice under section 3.2(f), not merely an ordinary version rejection. 计算器 - 高精度计算工作台, Apple ID 6809879246, com.calculatorx; version 1.0.0 was waiting for review.
+
+I have not deliberately hidden functionality, given reviewers a different product to evade review, or arranged a post-approval switch to another service.
+
+Current source and review materials describe local calculation, OCR, currency conversion and Apple system extensions. The currency tool downloads public European Central Bank reference-rate XML. The inspected provider parses dates, currency codes and numeric rates and supports cached data. That path consumes reference data, not executable code or instructions to change the product. The inspected request does not include the amount entered for calculation. This observation is limited to that path.
+
+Review can perform a calculation offline, scan and confirm an expression, inspect the rate source/date, refresh online, and use the cached snapshot offline. Rates are reference data, not live trading quotes. This app is not represented as entirely network-free.
+
+Before further submissions I will match current-source features to the submitted Build, preserve records, provide normal-launch recordings and network explanations, document extensions and permissions, and verify that localized metadata, screenshots, privacy information and review notes describe the same actual functionality. I will correct confirmed inaccuracies and record future feature changes specifically for review.
+
+This entry belongs to the same nine-app membership appeal. Please identify the affected Build, entry point and observed conduct, reconsider termination, and allow targeted evidence or correction and renewed review where appropriate.
+
+花点记账 | Apple ID 6801182491
+
+This entry concerns the September 11, 2026 account-level Pending Termination Notice under section 3.2(f), not merely an ordinary version rejection. 花点记账, Apple ID 6801182491, had previously been available. I understand that the account notice affects distribution; prior approval is not proof of compliance.
+
+I have not deliberately hidden functionality, given reviewers a different product to evade review, or arranged a post-approval switch to another service.
+
+The app is a personal expense, ledger and budget tool. Current code includes Apple CloudKit private/shared database paths for optional synchronization and sharing. These are network features for user records, not grounds to describe the whole app as offline. Local work includes development/release identity differences and later cloud features; I will establish which features are actually in each affected Build before making historical claims.
+
+Review can add a non-sensitive test entry, edit it, inspect reports, export data and view sync settings. If family sharing is in the affected Build, I will provide its actual invitation and permission steps. A local development connectivity check is not evidence of production synchronization.
+
+Before further submissions I will preserve the distributed and pending build records, verify the real signing team and app/extension identifiers, document feature changes and network/permission conditions, provide normal-install recordings, and align all localized metadata, screenshots, privacy disclosures and review notes with the verified Build. Any confirmed omission or misleading representation will be corrected.
+
+This entry belongs to the same nine-app membership appeal. Please identify the affected Build, entry point and observed conduct, reconsider termination, and allow targeted evidence or correction and renewed review where appropriate.
+
+拍照加水印 | Apple ID 6801176201
+
+This entry concerns the September 11, 2026 account-level Pending Termination Notice under section 3.2(f), not merely an ordinary version rejection. 拍照加水印, Apple ID 6801176201, had previously been available.
+
+I have not deliberately hidden functionality, given reviewers a different product to evade review, or arranged a post-approval switch to another service.
+
+The app is for capturing/importing photos or videos, applying watermarks, editing and exporting media. Current local code contains optional Apple WeatherKit requests and MapKit snapshots. Local handoff materials also discuss Google advertising and optional iCloud. These uses must be disclosed; I do not claim the app never accesses the internet.
+
+The current checkout and handoff include 2.0 functionality that has not yet been matched to the affected released Build. I will not present those later features, test images or a development archive as proof of what Apple reviewed.
+
+Review can normally launch the matching installed Build, capture or import owned media, apply a watermark, edit and export, and inspect the network and privacy choices actually present. Before further submissions I will preserve the original builds and metadata, verify the applicable version and enabled capabilities, provide normal-install recordings, document ads and optional weather/map/cloud behavior, and reconcile screenshots, localized keywords, review notes and privacy disclosures. Any confirmed inaccurate feature or integrity claim will be corrected.
+
+This entry belongs to the same nine-app membership appeal. Please identify the affected Build, entry point and observed conduct, reconsider termination, and allow targeted evidence or correction and renewed review where appropriate.
+
+照片制作 | Apple ID 6801042927
+
+This entry concerns the September 11, 2026 account-level Pending Termination Notice under section 3.2(f), not merely an ordinary version rejection. 照片制作, Apple ID 6801042927, had previously been available.
+
+I have not deliberately hidden functionality, given reviewers a different product to evade review, or arranged a post-approval switch to another service.
+
+The app is a photo and portrait-editing utility. Current local notes describe choosing an owned photo, adjusting its size, background and appearance, and exporting an image or print layout. The inspected segmentation code uses Apple Vision and Core Image on the supplied image. Local notes disclose Google advertising for iPhone/iPad. A local image-processing path does not establish that the entire app or all SDKs have no internet traffic.
+
+Review can use a normally installed matching Build to select an owned image, change size/background, inspect adjustments, export the result and open privacy settings. Photo checks and preset sizes are assistance tools, not official document acceptance or government certification.
+
+Before further submissions I will preserve the actual build records, verify the affected platform and version, provide normal-install online/offline and permission-choice recordings, inventory SDKs and content rights, and align names, localized keywords, screenshots, review notes and privacy disclosures with the verified feature set. Any unsupported acceptance claim, rights issue or incomplete disclosure will be addressed before requesting renewed review. These checks are not claimed complete.
+
+This entry belongs to the same nine-app membership appeal. Please identify the affected Build, entry point and observed conduct, reconsider termination, and allow targeted evidence or correction and renewed review where appropriate.
+

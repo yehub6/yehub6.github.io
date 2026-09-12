@@ -1,0 +1,33 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S09  Visible local demo data entry
+
+Project key: vpn
+Original relative path: ConfigStudio/Views/SettingsView.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 1872e204e9d109ddd3fe72d14624554a27862caba0b992ef29851b63bd9e72c4
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 71 to 87
+
+```text
+0071                              }
+0072                          }
+0073                      Text(L("subscription.alerts.footer")).font(.caption).foregroundStyle(.secondary)
+0074                      NavigationLink { SanitizedDataExportView() } label: { Label(L("settings.sanitizedExport"), systemImage: "square.and.arrow.up") }
+0075                      Button(L("settings.clearArchived"), role: .destructive) { showClearArchived = true }.disabled(!model.configurations.contains { $0.archived })
+0076                      Button(L("settings.deleteAll"), role: .destructive) { showDeleteAll = true }
+0077                  }
+0078                  Section {
+0079                      Button { let count = model.loadDemoDataset(); statusMessage = String(format: L("import.resultMessage"), count, 0) } label: { Label(L("sample.add"), systemImage: "sparkles.rectangle.stack") }.accessibilityIdentifier("loadDemoData")
+0080                      Button(L("sample.delete"), role: .destructive) { model.deleteSamples() }.disabled(!model.configurations.contains { $0.sourceType == .sample }).accessibilityIdentifier("deleteDemoData")
+0081                  } header: { Text(L("sample.section")) } footer: { Text(L("sample.notice")) }
+0082                  Section(L("settings.importExport")) {
+0083                      NavigationLink(L("settings.catalog")) { CatalogManagementView() }
+0084                      NavigationLink(L("settings.defaults")) { DefaultsSettingsView() }
+0085                  }
+0086                  Section(L("settings.appearance")) { Picker(L("settings.theme"), selection: $appearance) { Text(L("appearance.system")).tag(0); Text(L("appearance.light")).tag(1); Text(L("appearance.dark")).tag(2) }.pickerStyle(.segmented); Picker(L("settings.accent"), selection: $accentColor) { Text(L("accent.blue")).tag(0); Text(L("accent.indigo")).tag(1); Text(L("accent.purple")).tag(2); Text(L("accent.teal")).tag(3) }; Picker(L("settings.density"), selection: $listDensity) { Text(L("density.compact")).tag(0); Text(L("density.standard")).tag(1); Text(L("density.comfortable")).tag(2) } }
+0087  #if os(iOS) && !targetEnvironment(macCatalyst)
+```

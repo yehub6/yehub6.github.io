@@ -1,0 +1,43 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>D08 · Local release handoff and unresolved release checks · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · D08</p><h1>D08 · 拍照加水印</h1><p class="lead" lang="en">Local release handoff and unresolved release checks</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../watermark-camera.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/D08.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is an existing local document, not proof of text submitted to Apple.</p></div><p class="source-note">Project key: watermark<br>Original relative path: APP-STORE-HANDOFF.md<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: e881355f3ff89ac5abd37df926ad76b4547e43ab6a543b8d8e887a89a7c34ce5<br>Evidence level: pre-existing local document; submission not verified<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 43</h2><pre class="source-code"><code>0001  # 拍照加水印 2.0 App Store 交接
+0002  
+0003  ## 账号持有人第一步
+0004  
+0005  当前唯一硬阻塞是分发描述文件：现有 wildcard profile 不含 WeatherKit、iCloud 和 `iCloud.com.WatermarkCamera`。
+0006  
+0007  1. Apple Developer → Identifiers → `com.WatermarkCamera`：启用 WeatherKit 和 iCloud/CloudKit。
+0008  2. 创建或确认容器 `iCloud.com.WatermarkCamera`，关联 App ID。
+0009  3. CloudKit Dashboard 检查 Development schema，完成双账号/CKShare 测试后部署 Production。
+0010  4. 重新生成 App Store 分发 profile；在 Xcode 下载并确认 entitlement。
+0011  5. 用最新源码重新 Archive。不要上传本报告中的 unsigned Archive。
+0012  
+0013  ## 上传顺序
+0014  
+0015  1. 若 `1.0.4` 已存在，先把 Build 改为更大未使用值，并同步 metadata/审核资料。
+0016  2. 按 `REAL-DEVICE-TEST-CHECKLIST.md` 完成 iPhone/iPad 真机测试。
+0017  3. 录制当前 Build 的全新安装 UMP → ATT → 开屏/继续、拍照、录像、导入、编辑、项目/报告、iCloud 默认关闭流程；再录 ATT 拒绝路径。另录 WeatherKit 署名路径：设置 → 水印内容 → 天气水印 → 数据来源 → Apple Weather 法律归因页面。
+0018  4. 重新捕获当前 2.0 Build 的商店截图；旧 1.x 图和历史录屏不能冒充 2.0。
+0019  5. 官网发布 `baomayezi-official-site/protected-code` 到公开 HTTPS，确认以下 URL：
+0020     - `/apps/watermark-camera.html`
+0021     - `/legal/watermark-privacy.html`
+0022     - `/legal/watermark-support.html`
+0023     - `/guides/watermark-camera.html`
+0024     - `/legal/watermark-review.html`
+0025  6. 在 App Store Connect 录入 `AppStore资料/metadata-*.txt` 和审核备注。
+0026  7. 按 `AppStore资料/APP-STORE-CONNECT-PRIVACY-ATT-CHECKLIST.md` 更新 App Privacy。
+0027  8. Xcode Organizer：Validate App → Upload。
+0028  9. App Store Connect 处理完成后，用 TestFlight 安装同一 Build，全量回归再提交。
+0029  
+0030  ## App Privacy 快速答案
+0031  
+0032  - 是否收集数据：是。
+0033  - iCloud：照片或视频、精确位置、其他用户内容、其他数据；App 功能；关联；不追踪。
+0034  - Google Ads/UMP：按最终归档 SDK 清单填写粗略位置、崩溃、性能、产品交互、设备 ID、广告数据、其他诊断数据及用途。
+0035  - Device ID：保留 Google 的 linked/tracking 披露；ATT 在 SDK/广告请求前处理。
+0036  - User ID、姓名、电话、联系人、健康、财务、浏览/搜索历史：当前不勾选。
+0037  
+0038  ## 必须上传/保留
+0039  
+0040  - 当前 signed Archive 和三个匹配 dSYM。
+0041  - 当前 Build 的 iPhone/iPad 截图。
+0042  - 当前 Build 的全新安装真机录屏。
+0043  - 当前公开 HTTPS 隐私/支持 URL。</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

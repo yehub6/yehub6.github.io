@@ -1,0 +1,101 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S01  Automation conditions and advertising initialization
+
+Project key: vidma
+Original relative path: Vidma/Services/AdMobService.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 39048a58df0865808290fbbda958232849d87ed0f907950b7340c8c05b227632
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 68 to 95
+
+```text
+0068      static var isDisabledForAutomation: Bool {
+0069          let arguments = ProcessInfo.processInfo.arguments
+0070          let environment = ProcessInfo.processInfo.environment
+0071          return arguments.contains("-ui-testing")
+0072              || arguments.contains("-marketing-capture")
+0073              || environment["XCTestConfigurationFilePath"] != nil
+0074      }
+0075  
+0076      static var simulatesColdStartGateForAutomation: Bool {
+0077  #if DEBUG
+0078          ProcessInfo.processInfo.arguments.contains("-ui-test-cold-start-gate")
+0079  #else
+0080          false
+0081  #endif
+0082      }
+0083  
+0084      static func coldStartDecision(
+0085          isAutomation: Bool,
+0086          privacyFlowCompleted: Bool,
+0087          canRequestAds: Bool,
+0088          adLoadCompleted: Bool,
+0089          isAdAvailable: Bool
+0090      ) -> AdMobColdStartDecision {
+0091          if isAutomation { return .enterApp }
+0092          guard privacyFlowCompleted else { return .wait }
+0093          guard canRequestAds else { return .enterApp }
+0094          guard adLoadCompleted else { return .wait }
+0095          return isAdAvailable ? .presentAd : .enterApp
+```
+
+## Original lines 155 to 196
+
+```text
+0155      private let minimumBackgroundDuration: TimeInterval = 30
+0156  
+0157      private override init() {
+0158          isColdStartGateVisible = !AdMobConfiguration.isDisabledForAutomation
+0159              || AdMobConfiguration.simulatesColdStartGateForAutomation
+0160          super.init()
+0161      }
+0162  
+0163      func prepare() {
+0164          guard !hasPrepared else { return }
+0165          hasPrepared = true
+0166  
+0167          if AdMobConfiguration.simulatesColdStartGateForAutomation {
+0168              Task { @MainActor [weak self] in
+0169                  try? await Task.sleep(for: .seconds(5))
+0170                  self?.completeColdStartGate()
+0171              }
+0172              return
+0173          }
+0174  
+0175          guard !AdMobConfiguration.isDisabledForAutomation else {
+0176              completeColdStartGate()
+0177              return
+0178          }
+0179          isGatheringConsent = true
+0180  
+0181          let parameters = RequestParameters()
+0182          ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { [weak self] requestError in
+0183              Task { @MainActor in
+0184                  guard let self else { return }
+0185                  if let requestError {
+0186                      self.finishConsentGathering(after: requestError)
+0187                      return
+0188                  }
+0189  
+0190                  do {
+0191                      try await ConsentForm.loadAndPresentIfRequired(from: nil)
+0192                      self.finishConsentGathering(after: nil)
+0193                  } catch {
+0194                      self.finishConsentGathering(after: error)
+0195                  }
+0196              }
+```
+
+## Original lines 206 to 210
+
+```text
+0206      func handleScenePhase(_ phase: ScenePhase) {
+0207          guard !AdMobConfiguration.isDisabledForAutomation else { return }
+0208          switch phase {
+0209          case .background:
+0210              backgroundedAt = .now
+```

@@ -1,0 +1,69 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S07  Direct HTTPS text download
+
+Project key: vpn
+Original relative path: ConfigStudio/Import/SubscriptionImportService.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 71969530b54cfc664a003d02ef5798df2da38f59d4b3f5bb42d7983747b5776c
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 155 to 207
+
+```text
+0155  
+0156  struct SubscriptionImportService: SubscriptionImporting {
+0157      static let maximumSize = 10 * 1_024 * 1_024
+0158      private let providedConfiguration: URLSessionConfiguration?
+0159  
+0160      init(configuration: URLSessionConfiguration? = nil) {
+0161          providedConfiguration = configuration
+0162      }
+0163  
+0164      func fetch(_ rawURL: String) async throws -> SubscriptionPayload {
+0165          let url = try SubscriptionURLPolicy.validatedURL(from: rawURL)
+0166          let configuration = providedConfiguration ?? URLSessionConfiguration.ephemeral
+0167          configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+0168          configuration.timeoutIntervalForRequest = 20
+0169          configuration.timeoutIntervalForResource = 30
+0170          configuration.httpCookieStorage = nil
+0171          configuration.httpShouldSetCookies = false
+0172          configuration.urlCredentialStorage = nil
+0173          configuration.urlCache = nil
+0174          configuration.httpMaximumConnectionsPerHost = 1
+0175  
+0176          let session = URLSession(configuration: configuration)
+0177          defer { session.invalidateAndCancel() }
+0178          var request = URLRequest(url: url)
+0179          request.httpMethod = "GET"
+0180          request.httpShouldHandleCookies = false
+0181          request.setValue("text/plain, application/yaml, application/json, application/octet-stream;q=0.8, */*;q=0.5", forHTTPHeaderField: "Accept")
+0182          request.setValue("VPN-TP/1.0.1", forHTTPHeaderField: "User-Agent")
+0183  
+0184          do {
+0185              let (bytes, response) = try await session.bytes(for: request, delegate: SubscriptionRedirectDelegate())
+0186              try Task.checkCancellation()
+0187              guard let http = response as? HTTPURLResponse,
+0188                    (200...299).contains(http.statusCode) else {
+0189                  throw AppError.subscriptionHTTP
+0190              }
+0191              guard http.expectedContentLength <= Int64(Self.maximumSize) else {
+0192                  throw AppError.fileTooLarge
+0193              }
+0194              var data = Data()
+0195              if http.expectedContentLength > 0 { data.reserveCapacity(Int(http.expectedContentLength)) }
+0196              for try await byte in bytes {
+0197                  try Task.checkCancellation()
+0198                  guard data.count < Self.maximumSize else { throw AppError.fileTooLarge }
+0199                  data.append(byte)
+0200              }
+0201              guard let content = String(data: data, encoding: .utf8) else {
+0202                  throw AppError.subscriptionEncoding
+0203              }
+0204              let clean = content.trimmingCharacters(in: .whitespacesAndNewlines)
+0205              guard !clean.isEmpty else { throw AppError.emptyContent }
+0206              let finalURL = http.url ?? url
+0207              return SubscriptionPayload(
+```

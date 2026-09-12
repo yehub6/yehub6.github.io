@@ -1,0 +1,91 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S11  ECB data request XML parsing and cache fallback
+
+Project key: calc
+Original relative path: Packages/PrecisionCalcKit/Sources/CalcSystemIntegration/SystemIntegration.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 1fb932a35430ec0bec8fc612bbbb251283e749c30dad8df59702221fc951a623
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 76 to 150
+
+```text
+0076      public let source: String
+0077      public let baseCurrency: String
+0078      public let rates: [String: BigDecimal]
+0079      public let retrievedAt: Date
+0080  
+0081      public init(date: Date, source: String, baseCurrency: String = "EUR", rates: [String: BigDecimal], retrievedAt: Date = Date()) {
+0082          self.date = date; self.source = source; self.baseCurrency = baseCurrency; self.rates = rates; self.retrievedAt = retrievedAt
+0083      }
+0084  }
+0085  
+0086  public protocol ExchangeRateProvider: Sendable { func latestRates() async throws -> ExchangeRateSnapshot }
+0087  
+0088  public enum ExchangeRateError: Error, Sendable, Hashable, LocalizedError {
+0089      case invalidResponse, missingCurrency(String), invalidXML, noCache
+0090      public var errorDescription: String? {
+0091          switch self { case .invalidResponse: "汇率服务响应无效"; case .missingCurrency(let code): "参考源没有提供 \(code) 汇率"; case .invalidXML: "无法解析参考汇率数据"; case .noCache: "没有可用的本地汇率快照" }
+0092      }
+0093  }
+0094  
+0095  public struct ECBExchangeRateProvider: ExchangeRateProvider {
+0096      public let endpoint: URL
+0097      public let session: URLSession
+0098      public init(endpoint: URL = URL(string: "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml") ?? URL(fileURLWithPath: "/invalid-ecb-endpoint"), session: URLSession = .shared) { self.endpoint = endpoint; self.session = session }
+0099  
+0100      public func latestRates() async throws -> ExchangeRateSnapshot {
+0101          var request = URLRequest(url: endpoint, timeoutInterval: 10)
+0102          request.setValue("PrecisionCalc/1.0", forHTTPHeaderField: "User-Agent")
+0103          let (data, response) = try await session.data(for: request)
+0104          guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else { throw ExchangeRateError.invalidResponse }
+0105          return try Self.parse(data)
+0106      }
+0107  
+0108      public static func parse(_ data: Data) throws -> ExchangeRateSnapshot {
+0109          let delegate = ECBParserDelegate()
+0110          let parser = XMLParser(data: data)
+0111          parser.delegate = delegate
+0112          guard parser.parse(), !delegate.rates.isEmpty else { throw ExchangeRateError.invalidXML }
+0113          var rates = delegate.rates
+0114          rates["EUR"] = .one
+0115          return ExchangeRateSnapshot(date: delegate.date ?? Date(), source: "European Central Bank", rates: rates)
+0116      }
+0117  }
+0118  
+0119  private final class ECBParserDelegate: NSObject, XMLParserDelegate, @unchecked Sendable {
+0120      var rates: [String: BigDecimal] = [:]
+0121      var date: Date?
+0122      func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String: String] = [:]) {
+0123          if let value = attributeDict["time"] { date = ISO8601DateFormatter.precisionCalcDay.date(from: value) }
+0124          if let currency = attributeDict["currency"], let rate = attributeDict["rate"], let decimal = try? BigDecimal(parsing: rate) { rates[currency] = decimal }
+0125      }
+0126  }
+0127  
+0128  public actor CachedExchangeRateProvider: ExchangeRateProvider {
+0129      private let upstream: any ExchangeRateProvider
+0130      private let defaults: UserDefaults
+0131      private let key = "precisioncalc.exchange-rate.snapshot"
+0132      public init(upstream: any ExchangeRateProvider, suiteName: String = "group.com.calculatorx.shared") {
+0133          self.upstream = upstream
+0134          self.defaults = UserDefaults(suiteName: suiteName) ?? .standard
+0135      }
+0136      public func latestRates() async throws -> ExchangeRateSnapshot {
+0137          do {
+0138              let snapshot = try await upstream.latestRates()
+0139              if let data = try? JSONEncoder().encode(snapshot) { defaults.set(data, forKey: key) }
+0140              return snapshot
+0141          } catch {
+0142              guard let data = defaults.data(forKey: key), let snapshot = try? JSONDecoder().decode(ExchangeRateSnapshot.self, from: data) else { throw error }
+0143              return snapshot
+0144          }
+0145      }
+0146  }
+0147  
+0148  public struct BundledSnapshotProvider: ExchangeRateProvider {
+0149      public init() {}
+0150      public func latestRates() async throws -> ExchangeRateSnapshot {
+```

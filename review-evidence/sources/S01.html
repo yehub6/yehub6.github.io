@@ -1,0 +1,73 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S01 · Automation conditions and advertising initialization · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S01</p><h1>S01 · 制作视频 / Vidma</h1><p class="lead" lang="en">Automation conditions and advertising initialization</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vidma.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S01.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: vidma<br>Original relative path: Vidma/Services/AdMobService.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 39048a58df0865808290fbbda958232849d87ed0f907950b7340c8c05b227632<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 68 to 95</h2><pre class="source-code"><code>0068      static var isDisabledForAutomation: Bool {
+0069          let arguments = ProcessInfo.processInfo.arguments
+0070          let environment = ProcessInfo.processInfo.environment
+0071          return arguments.contains(&quot;-ui-testing&quot;)
+0072              || arguments.contains(&quot;-marketing-capture&quot;)
+0073              || environment[&quot;XCTestConfigurationFilePath&quot;] != nil
+0074      }
+0075  
+0076      static var simulatesColdStartGateForAutomation: Bool {
+0077  #if DEBUG
+0078          ProcessInfo.processInfo.arguments.contains(&quot;-ui-test-cold-start-gate&quot;)
+0079  #else
+0080          false
+0081  #endif
+0082      }
+0083  
+0084      static func coldStartDecision(
+0085          isAutomation: Bool,
+0086          privacyFlowCompleted: Bool,
+0087          canRequestAds: Bool,
+0088          adLoadCompleted: Bool,
+0089          isAdAvailable: Bool
+0090      ) -&gt; AdMobColdStartDecision {
+0091          if isAutomation { return .enterApp }
+0092          guard privacyFlowCompleted else { return .wait }
+0093          guard canRequestAds else { return .enterApp }
+0094          guard adLoadCompleted else { return .wait }
+0095          return isAdAvailable ? .presentAd : .enterApp</code></pre><h2>Original lines 155 to 196</h2><pre class="source-code"><code>0155      private let minimumBackgroundDuration: TimeInterval = 30
+0156  
+0157      private override init() {
+0158          isColdStartGateVisible = !AdMobConfiguration.isDisabledForAutomation
+0159              || AdMobConfiguration.simulatesColdStartGateForAutomation
+0160          super.init()
+0161      }
+0162  
+0163      func prepare() {
+0164          guard !hasPrepared else { return }
+0165          hasPrepared = true
+0166  
+0167          if AdMobConfiguration.simulatesColdStartGateForAutomation {
+0168              Task { @MainActor [weak self] in
+0169                  try? await Task.sleep(for: .seconds(5))
+0170                  self?.completeColdStartGate()
+0171              }
+0172              return
+0173          }
+0174  
+0175          guard !AdMobConfiguration.isDisabledForAutomation else {
+0176              completeColdStartGate()
+0177              return
+0178          }
+0179          isGatheringConsent = true
+0180  
+0181          let parameters = RequestParameters()
+0182          ConsentInformation.shared.requestConsentInfoUpdate(with: parameters) { [weak self] requestError in
+0183              Task { @MainActor in
+0184                  guard let self else { return }
+0185                  if let requestError {
+0186                      self.finishConsentGathering(after: requestError)
+0187                      return
+0188                  }
+0189  
+0190                  do {
+0191                      try await ConsentForm.loadAndPresentIfRequired(from: nil)
+0192                      self.finishConsentGathering(after: nil)
+0193                  } catch {
+0194                      self.finishConsentGathering(after: error)
+0195                  }
+0196              }</code></pre><h2>Original lines 206 to 210</h2><pre class="source-code"><code>0206      func handleScenePhase(_ phase: ScenePhase) {
+0207          guard !AdMobConfiguration.isDisabledForAutomation else { return }
+0208          switch phase {
+0209          case .background:
+0210              backgroundedAt = .now</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

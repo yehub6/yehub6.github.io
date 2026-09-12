@@ -1,0 +1,79 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S16  Optional Apple WeatherKit and MapKit data
+
+Project key: watermark
+Original relative path: WatermarkCamera/WatermarkKit/EnvironmentalContextServices.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: f9e65dcf1453a9e95d2ef063e08a3a76a98bd337c4d3e4470ddcdcf7ee5a4c2c
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 51 to 74
+
+```text
+0051      }
+0052  
+0053      func snapshot(for location: CLLocation, now: Date = Date(), enabled: Bool) async -> WeatherSnapshot? {
+0054          guard enabled else { return nil }
+0055          if let cached = cache.freshSnapshot(for: location, now: now, timeToLive: timeToLive) { return cached }
+0056          do {
+0057              let current = try await WeatherKit.WeatherService.shared.weather(for: location, including: .current)
+0058              let snapshot = WeatherSnapshot(
+0059                  capturedAt: now,
+0060                  condition: current.condition.description,
+0061                  temperatureCelsius: current.temperature.converted(to: .celsius).value,
+0062                  apparentTemperatureCelsius: current.apparentTemperature.converted(to: .celsius).value,
+0063                  humidity: current.humidity,
+0064                  windSpeedMetersPerSecond: current.wind.speed.converted(to: .metersPerSecond).value,
+0065                  windDirectionDegrees: current.wind.direction.converted(to: .degrees).value
+0066              )
+0067              cache.store(snapshot, for: location)
+0068              persist()
+0069              return snapshot
+0070          } catch {
+0071              // Weather is optional. Missing entitlement, connectivity, or service
+0072              // errors hide weather elements and never block capture.
+0073              return nil
+0074          }
+```
+
+## Original lines 99 to 132
+
+```text
+0099  
+0100      func snapshot(for location: CLLocation) async -> String? {
+0101          let name = String(format: "map-%.4f-%.4f.png", location.coordinate.latitude,
+0102                            location.coordinate.longitude).replacingOccurrences(of: "-", with: "m")
+0103          let url = directory.appendingPathComponent(name)
+0104          if FileManager.default.fileExists(atPath: url.path) { return "MapSnapshots/\(name)" }
+0105  
+0106          let options = MKMapSnapshotter.Options()
+0107          options.region = MKCoordinateRegion(center: location.coordinate,
+0108                                              latitudinalMeters: 650,
+0109                                              longitudinalMeters: 650)
+0110          options.size = CGSize(width: 600, height: 360)
+0111          options.scale = 2
+0112          do {
+0113              let snapshot = try await MKMapSnapshotter(options: options).start()
+0114              let image = UIGraphicsImageRenderer(size: options.size).image { _ in
+0115                  snapshot.image.draw(at: .zero)
+0116                  let point = snapshot.point(for: location.coordinate)
+0117                  UIColor.systemRed.setFill()
+0118                  UIBezierPath(ovalIn: CGRect(x: point.x - 10, y: point.y - 10, width: 20, height: 20)).fill()
+0119                  UIColor.white.setStroke()
+0120                  let ring = UIBezierPath(ovalIn: CGRect(x: point.x - 10, y: point.y - 10, width: 20, height: 20))
+0121                  ring.lineWidth = 3
+0122                  ring.stroke()
+0123              }
+0124              guard let data = image.pngData() else { return nil }
+0125              try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+0126              try data.write(to: url, options: .atomic)
+0127              return "MapSnapshots/\(name)"
+0128          } catch {
+0129              return nil
+0130          }
+0131      }
+0132  }
+```

@@ -1,0 +1,56 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S04 · Apple speech request and local-only versus automatic attempts · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S04</p><h1>S04 · 制作视频 / Vidma</h1><p class="lead" lang="en">Apple speech request and local-only versus automatic attempts</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vidma.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S04.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: vidma<br>Original relative path: Vidma/Services/SpeechSubtitleService.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 1f55567b14fb54e0699df7709137a264da703dd162d7a5b550e944670f628220<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 46 to 63</h2><pre class="source-code"><code>0046      init(recognizer: SFSpeechRecognizer) {
+0047          self.recognizer = recognizer
+0048      }
+0049  
+0050      func recognize(
+0051          url: URL,
+0052          requiresOnDeviceRecognition: Bool,
+0053          audioDuration: Double,
+0054          progress: @escaping @Sendable (Double) async -&gt; Void
+0055      ) async throws -&gt; [RecognizedSpeechSegment] {
+0056          try Task.checkCancellation()
+0057          let request = SFSpeechURLRecognitionRequest(url: url)
+0058          request.shouldReportPartialResults = true
+0059          request.requiresOnDeviceRecognition = requiresOnDeviceRecognition
+0060          request.taskHint = .dictation
+0061          request.addsPunctuation = true
+0062  
+0063          return try await withCheckedThrowingContinuation { continuation in</code></pre><h2>Original lines 259 to 286</h2><pre class="source-code"><code>0259          guard let recognizerBox = await LegacySpeechRecognizerBox(localeIdentifier: localeIdentifier), recognizerBox.recognizer.isAvailable else {
+0260              throw AppError.speechRecognitionFailure(context: &quot;speech recognizer unavailable for \(localeIdentifier)&quot;)
+0261          }
+0262          let recognizer = recognizerBox.recognizer
+0263          if mode == .onDeviceOnly, !recognizer.supportsOnDeviceRecognition {
+0264              throw AppError.speechRecognitionFailure(messageKey: &quot;error.speech.onDevice.message&quot;, context: &quot;on-device recognition unavailable for \(localeIdentifier)&quot;)
+0265          }
+0266  
+0267          let attempts = Self.recognitionAttempts(mode: mode, supportsOnDeviceRecognition: recognizer.supportsOnDeviceRecognition)
+0268          let chunks = try await AudioPreprocessingService.shared.legacyChunks(from: prepared, outputDirectory: outputDirectory)
+0269          await SubtitleDiagnosticsStore.shared.recordChunks(chunks)
+0270          var recognized: [RecognizedSpeechSegment] = []
+0271          var lastFailure: Error?
+0272          var completedRequest = false
+0273  
+0274          for (chunkIndex, chunk) in chunks.enumerated() {
+0275              var chunkCompleted = false
+0276              for (attemptIndex, requiresOnDeviceRecognition) in attempts.enumerated() {
+0277                  try Task.checkCancellation()
+0278                  let session = SpeechRecognitionSession(recognizer: recognizer)
+0279                  do {
+0280                      let segments = try await withTaskCancellationHandler {
+0281                          try await session.recognize(
+0282                              url: chunk.url,
+0283                              requiresOnDeviceRecognition: requiresOnDeviceRecognition,
+0284                              audioDuration: chunk.duration
+0285                          ) { fraction in
+0286                              let attemptFraction = (Double(attemptIndex) + min(1, max(0, fraction))) / Double(attempts.count)</code></pre><h2>Original lines 434 to 445</h2><pre class="source-code"><code>0434      nonisolated static func recognitionAttempts(
+0435          mode: SpeechRecognitionMode,
+0436          supportsOnDeviceRecognition: Bool
+0437      ) -&gt; [Bool] {
+0438          switch mode {
+0439          case .automatic:
+0440              supportsOnDeviceRecognition ? [true, false] : [false]
+0441          case .onDeviceOnly:
+0442              [true]
+0443          }
+0444      }
+0445  </code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

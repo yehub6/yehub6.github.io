@@ -1,0 +1,57 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S16 · Optional Apple WeatherKit and MapKit data · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S16</p><h1>S16 · 拍照加水印</h1><p class="lead" lang="en">Optional Apple WeatherKit and MapKit data</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../watermark-camera.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S16.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: watermark<br>Original relative path: WatermarkCamera/WatermarkKit/EnvironmentalContextServices.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: f9e65dcf1453a9e95d2ef063e08a3a76a98bd337c4d3e4470ddcdcf7ee5a4c2c<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 51 to 74</h2><pre class="source-code"><code>0051      }
+0052  
+0053      func snapshot(for location: CLLocation, now: Date = Date(), enabled: Bool) async -&gt; WeatherSnapshot? {
+0054          guard enabled else { return nil }
+0055          if let cached = cache.freshSnapshot(for: location, now: now, timeToLive: timeToLive) { return cached }
+0056          do {
+0057              let current = try await WeatherKit.WeatherService.shared.weather(for: location, including: .current)
+0058              let snapshot = WeatherSnapshot(
+0059                  capturedAt: now,
+0060                  condition: current.condition.description,
+0061                  temperatureCelsius: current.temperature.converted(to: .celsius).value,
+0062                  apparentTemperatureCelsius: current.apparentTemperature.converted(to: .celsius).value,
+0063                  humidity: current.humidity,
+0064                  windSpeedMetersPerSecond: current.wind.speed.converted(to: .metersPerSecond).value,
+0065                  windDirectionDegrees: current.wind.direction.converted(to: .degrees).value
+0066              )
+0067              cache.store(snapshot, for: location)
+0068              persist()
+0069              return snapshot
+0070          } catch {
+0071              // Weather is optional. Missing entitlement, connectivity, or service
+0072              // errors hide weather elements and never block capture.
+0073              return nil
+0074          }</code></pre><h2>Original lines 99 to 132</h2><pre class="source-code"><code>0099  
+0100      func snapshot(for location: CLLocation) async -&gt; String? {
+0101          let name = String(format: &quot;map-%.4f-%.4f.png&quot;, location.coordinate.latitude,
+0102                            location.coordinate.longitude).replacingOccurrences(of: &quot;-&quot;, with: &quot;m&quot;)
+0103          let url = directory.appendingPathComponent(name)
+0104          if FileManager.default.fileExists(atPath: url.path) { return &quot;MapSnapshots/\(name)&quot; }
+0105  
+0106          let options = MKMapSnapshotter.Options()
+0107          options.region = MKCoordinateRegion(center: location.coordinate,
+0108                                              latitudinalMeters: 650,
+0109                                              longitudinalMeters: 650)
+0110          options.size = CGSize(width: 600, height: 360)
+0111          options.scale = 2
+0112          do {
+0113              let snapshot = try await MKMapSnapshotter(options: options).start()
+0114              let image = UIGraphicsImageRenderer(size: options.size).image { _ in
+0115                  snapshot.image.draw(at: .zero)
+0116                  let point = snapshot.point(for: location.coordinate)
+0117                  UIColor.systemRed.setFill()
+0118                  UIBezierPath(ovalIn: CGRect(x: point.x - 10, y: point.y - 10, width: 20, height: 20)).fill()
+0119                  UIColor.white.setStroke()
+0120                  let ring = UIBezierPath(ovalIn: CGRect(x: point.x - 10, y: point.y - 10, width: 20, height: 20))
+0121                  ring.lineWidth = 3
+0122                  ring.stroke()
+0123              }
+0124              guard let data = image.pngData() else { return nil }
+0125              try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+0126              try data.write(to: url, options: .atomic)
+0127              return &quot;MapSnapshots/\(name)&quot;
+0128          } catch {
+0129              return nil
+0130          }
+0131      }
+0132  }</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

@@ -1,0 +1,46 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S17  Apple Game Center authentication and offline status
+
+Project key: key
+Original relative path: Mac/Sources/KeyGarden/GameCenterManager.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 74098406d454023245605f32e67b5012a6976c5104ca47480ddbdae33d97ce7e
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 82 to 111
+
+```text
+0082  
+0083      func configureAccessPoint() {
+0084          GKAccessPoint.shared.isActive = false
+0085      }
+0086  
+0087      func authenticate() {
+0088          GKLocalPlayer.local.authenticateHandler = { [weak self] viewController, error in
+0089              Task { @MainActor in
+0090                  guard let self else { return }
+0091                  if let viewController {
+0092                      self.present(viewController)
+0093                  } else if GKLocalPlayer.local.isAuthenticated {
+0094                      self.isAuthenticated = true
+0095                      self.playerName = GKLocalPlayer.local.displayName
+0096                      self.statusText = self.text("已连接 · \(self.playerName)", "Connected · \(self.playerName)")
+0097                      self.reloadLocalProfile()
+0098                  } else {
+0099                      self.isAuthenticated = false
+0100                      self.statusText = error == nil ? self.text("未连接 Game Center", "Game Center not connected") : self.text("离线模式 · 本地记录仍可用", "Offline mode · local progress is still available")
+0101                  }
+0102              }
+0103          }
+0104      }
+0105  
+0106      func showGameCenter() {
+0107          if !GKLocalPlayer.local.isAuthenticated {
+0108              authenticate()
+0109              return
+0110          }
+0111          let controller = GKGameCenterViewController(
+```

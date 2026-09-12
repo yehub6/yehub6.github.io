@@ -1,0 +1,47 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S12  On-device Vision OCR
+
+Project key: scan
+Original relative path: ScanlyPDF/Services/OCRService.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 4466d6c697543b42c508f5baf27ba70a6c722b892e0826047c2519b32f9f10c3
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 31
+
+```text
+0001  import PDFKit
+0002  import UIKit
+0003  import Vision
+0004  
+0005  actor OCRService {
+0006      struct PageResult: Identifiable, Sendable { let id: Int; let text: String }
+0007      struct LayoutPageResult: Identifiable, Sendable { let id: Int; let observations: [TextObservation] }
+0008      struct TextObservation: Identifiable, Sendable {
+0009          let id = UUID()
+0010          let text: String
+0011          /// Top-left normalized coordinates, matching the paper editor model.
+0012          let rect: CGRect
+0013      }
+0014  
+0015      func recognize(image: UIImage, languages: [String] = ["zh-Hans", "zh-Hant", "en-US", "ja-JP", "ko-KR", "es-ES", "fr-FR", "de-DE"]) async throws -> String {
+0016          guard let cgImage = image.cgImage else { throw AppError.invalidFile }
+0017          return try await withCheckedThrowingContinuation { continuation in
+0018              let request = VNRecognizeTextRequest { request, error in
+0019                  if let error { continuation.resume(throwing: error); return }
+0020                  let text = (request.results as? [VNRecognizedTextObservation])?.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n") ?? ""
+0021                  continuation.resume(returning: text)
+0022              }
+0023              request.recognitionLevel = .accurate
+0024              request.usesLanguageCorrection = true
+0025              let supported = (try? request.supportedRecognitionLanguages()) ?? []
+0026              request.recognitionLanguages = languages.filter(supported.contains)
+0027              if request.recognitionLanguages.isEmpty { request.recognitionLanguages = Array(supported.prefix(3)) }
+0028              do { try VNImageRequestHandler(cgImage: cgImage).perform([request]) }
+0029              catch { continuation.resume(throwing: error) }
+0030          }
+0031      }
+```

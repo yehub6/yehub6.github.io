@@ -1,0 +1,53 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S07 · Direct HTTPS text download · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S07</p><h1>S07 · VPN TP</h1><p class="lead" lang="en">Direct HTTPS text download</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vpn-tp.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S07.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: vpn<br>Original relative path: ConfigStudio/Import/SubscriptionImportService.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 71969530b54cfc664a003d02ef5798df2da38f59d4b3f5bb42d7983747b5776c<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 155 to 207</h2><pre class="source-code"><code>0155  
+0156  struct SubscriptionImportService: SubscriptionImporting {
+0157      static let maximumSize = 10 * 1_024 * 1_024
+0158      private let providedConfiguration: URLSessionConfiguration?
+0159  
+0160      init(configuration: URLSessionConfiguration? = nil) {
+0161          providedConfiguration = configuration
+0162      }
+0163  
+0164      func fetch(_ rawURL: String) async throws -&gt; SubscriptionPayload {
+0165          let url = try SubscriptionURLPolicy.validatedURL(from: rawURL)
+0166          let configuration = providedConfiguration ?? URLSessionConfiguration.ephemeral
+0167          configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+0168          configuration.timeoutIntervalForRequest = 20
+0169          configuration.timeoutIntervalForResource = 30
+0170          configuration.httpCookieStorage = nil
+0171          configuration.httpShouldSetCookies = false
+0172          configuration.urlCredentialStorage = nil
+0173          configuration.urlCache = nil
+0174          configuration.httpMaximumConnectionsPerHost = 1
+0175  
+0176          let session = URLSession(configuration: configuration)
+0177          defer { session.invalidateAndCancel() }
+0178          var request = URLRequest(url: url)
+0179          request.httpMethod = &quot;GET&quot;
+0180          request.httpShouldHandleCookies = false
+0181          request.setValue(&quot;text/plain, application/yaml, application/json, application/octet-stream;q=0.8, */*;q=0.5&quot;, forHTTPHeaderField: &quot;Accept&quot;)
+0182          request.setValue(&quot;VPN-TP/1.0.1&quot;, forHTTPHeaderField: &quot;User-Agent&quot;)
+0183  
+0184          do {
+0185              let (bytes, response) = try await session.bytes(for: request, delegate: SubscriptionRedirectDelegate())
+0186              try Task.checkCancellation()
+0187              guard let http = response as? HTTPURLResponse,
+0188                    (200...299).contains(http.statusCode) else {
+0189                  throw AppError.subscriptionHTTP
+0190              }
+0191              guard http.expectedContentLength &lt;= Int64(Self.maximumSize) else {
+0192                  throw AppError.fileTooLarge
+0193              }
+0194              var data = Data()
+0195              if http.expectedContentLength &gt; 0 { data.reserveCapacity(Int(http.expectedContentLength)) }
+0196              for try await byte in bytes {
+0197                  try Task.checkCancellation()
+0198                  guard data.count &lt; Self.maximumSize else { throw AppError.fileTooLarge }
+0199                  data.append(byte)
+0200              }
+0201              guard let content = String(data: data, encoding: .utf8) else {
+0202                  throw AppError.subscriptionEncoding
+0203              }
+0204              let clean = content.trimmingCharacters(in: .whitespacesAndNewlines)
+0205              guard !clean.isEmpty else { throw AppError.emptyContent }
+0206              let finalURL = http.url ?? url
+0207              return SubscriptionPayload(</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

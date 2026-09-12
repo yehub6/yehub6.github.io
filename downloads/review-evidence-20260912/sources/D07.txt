@@ -1,0 +1,74 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# D07  Local review-note document not proof of submission
+
+Project key: photo
+Original relative path: AppStore/Submission/02-App-Review-审核备注.md
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 34876934f3e95ebcccb3613acd4d8055256c078fcf1fb98532d913e4edcb87bc
+Evidence level: pre-existing local document; submission not verified
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 58
+
+```text
+0001  # iOS / iPadOS App Review 审核备注
+0002  
+0003  更新日期：2026 年 8 月 26 日
+0004  
+0005  ## 审核要点
+0006  
+0007  - 无需注册、登录、订阅、购买或激活。
+0008  - 核心照片处理全部在设备本地完成。
+0009  - Apple Vision 用于人像前景、脸部和姿态分析；用户照片及分析结果不会上传。
+0010  - iPhone / iPad 版包含 Google Mobile Ads 开屏、横幅和原生广告。
+0011  - 广告初始化前处理 Google UMP；需要访问 IDFA 时请求 Apple ATT。
+0012  - 拒绝 ATT 不影响任何照片功能，仍可能出现不使用 IDFA 的广告。
+0013  - 广告是否出现及加载时间取决于网络、地区隐私选择和广告填充，首次启动不保证立即有可展示广告。
+0014  
+0015  ## 审核步骤
+0016  
+0017  1. 启动 App，完成可能出现的 UMP 隐私选择和 ATT 系统授权。
+0018  2. 点击“选择照片”，使用相机拍摄或在系统照片选择器中选择一张正面人像。
+0019  3. 等待本机人像识别完成。
+0020  4. 切换预设尺寸或进入“更多证件与签证尺寸”进行分类、搜索和收藏。
+0021  5. 打开“自定义尺寸”，使用毫米、厘米或英寸输入宽高。
+0022  6. 更换预设或自定义背景色。
+0023  7. 在“构图与画面微调”中测试人物位置、亮度、阴影、色温、自然美颜和一键光线优化。
+0024  8. 查看“照片智能检查”。其结果仅供拍摄参考，不代表任何机构审核结论。
+0025  9. 点击“生成证件照”，测试 PNG、JPEG、HEIC、PDF，150/300/600/1200 DPI，以及单张或打印排版。面板会显示实际输出像素；JPEG/HEIC 单张可选约 50/100/200 KB。
+0026  10. 测试保存到照片、保存到文件或系统分享。PDF 不写入照片图库。
+0027  11. 设置页可切换五套皮肤、五种语言、广告隐私选项、反馈和 App Store 评价入口。
+0028  
+0029  ## 可直接粘贴的英文备注
+0030  
+0031  ```text
+0032  Photo Maker requires no registration, login, subscription, purchase, activation, or demo account.
+0033  
+0034  All portrait processing is performed on the device. Apple Vision is used for person segmentation plus face and body-position analysis. The selected photo and Vision results are not uploaded to a developer-operated server or shared with the advertising SDK.
+0035  
+0036  Review steps:
+0037  1. Launch the app and complete any Google UMP privacy form and Apple ATT prompt that may apply.
+0038  2. Tap Choose Photo, then capture one portrait or select one image in the system photo picker.
+0039  3. Wait for on-device portrait processing to finish.
+0040  4. Choose a preset, search or favorite additional sizes, or enter custom width and height in millimeters, centimeters, or inches.
+0041  5. Select a solid or custom background. Optional controls cover zoom, placement, brightness, contrast, saturation, shadows, warmth, natural beauty, and one-tap light optimization.
+0042  6. The Photo Check panel provides reference-only checks for face detection, one person, source resolution, and face position.
+0043  7. Tap Generate ID Photo. Test PNG, JPEG, HEIC, or PDF; 150/300/600/1200 DPI; and single-photo or print-sheet layouts. The exact output pixels are shown. Single JPEG/HEIC output also supports approximate 50/100/200 KB targets.
+0044  8. Save an image to Photos, save to Files, or use the system share sheet. PDF is saved to Files or shared.
+0045  9. Settings includes five themes, five languages, advertising privacy options when required, email feedback, and an App Store review link.
+0046  
+0047  The iPhone and iPad version uses Google Mobile Ads SDK 13.8.0 and User Messaging Platform 3.1.0 for app-open, banner, and native ads. UMP is handled before ad initialization. Apple ATT authorization is requested before access to the advertising identifier. Declining tracking does not restrict any photo feature. Ads may still be served without IDFA. Ad availability and timing depend on network access, regional consent requirements, and ad fill, so an app-open ad is not guaranteed to appear immediately on every launch.
+0048  
+0049  Camera permission is requested only after the user chooses direct capture. Add-only Photos permission is requested only when saving an image to Photos. No special sample file is required.
+0050  ```
+0051  
+0052  ## 审核联系人
+0053  
+0054  - 姓名：[待填写]
+0055  - 电话：[待填写，包含国家/地区代码]
+0056  - 邮箱：`[REDACTED: contact email]`
+0057  - 登录账号：不需要
+0058  - 登录密码：不需要
+```

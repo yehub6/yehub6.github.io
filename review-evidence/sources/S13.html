@@ -1,0 +1,64 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>S13 · Apple CloudKit private database and initial state · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · S13</p><h1>S13 · 发财了</h1><p class="lead" lang="en">Apple CloudKit private database and initial state</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../facai.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/S13.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is selected source, not a whole-repository or binary absence finding.</p></div><p class="source-note">Project key: facai<br>Original relative path: FaCai/Services/PersonalCloudStore.swift<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: aaa6434707f615a526280f75aeea3cf125f1e675b38c180c728a952079b7a1f4<br>Evidence level: local source excerpt<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 64</h2><pre class="source-code"><code>0001  import CloudKit
+0002  import Foundation
+0003  import Network
+0004  import Observation
+0005  
+0006  @MainActor protocol CloudTransport {
+0007    func account() async throws -&gt; String
+0008    func fetch(_ id: String) async throws -&gt; CloudObject?
+0009    func save(_ id: String, data: Data, replacing: CloudObject?) async throws -&gt; CloudObject
+0010  }
+0011  struct CloudObject {
+0012    var bytes: Data
+0013    var record: CKRecord?
+0014  }
+0015  @MainActor final class AppleCloudTransport: CloudTransport {
+0016    private var container: CKContainer { CKContainer(identifier: &quot;iCloud.com.facaile&quot;) }
+0017    private var database: CKDatabase { container.privateCloudDatabase }
+0018    func account() async throws -&gt; String {
+0019      guard try await container.accountStatus() == .available else {
+0020        throw AppProblem(&quot;请在系统设置登录 iCloud，并允许发财了使用 iCloud。&quot;)
+0021      }
+0022      return try await container.userRecordID().recordName
+0023    }
+0024    func fetch(_ id: String) async throws -&gt; CloudObject? {
+0025      do {
+0026        let record = try await database.record(for: CKRecord.ID(recordName: id))
+0027        guard let asset = record[&quot;body&quot;] as? CKAsset, let url = asset.fileURL,
+0028          let hash = record[&quot;checksum&quot;] as? String,
+0029          (try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? Int.max) &lt;= 25 * 1024 * 1024
+0030        else { throw AppProblem(&quot;iCloud 文件不完整或过大。&quot;) }
+0031        let bytes = try Data(contentsOf: url)
+0032        guard BackupService.hash(bytes) == hash else { throw AppProblem(&quot;iCloud 文件校验失败，请稍后重试。&quot;) }
+0033        return CloudObject(bytes: bytes, record: record)
+0034      } catch let error as CKError where error.code == .unknownItem { return nil }
+0035    }
+0036    func save(_ id: String, data: Data, replacing: CloudObject?) async throws -&gt; CloudObject {
+0037      guard data.count &lt;= 25 * 1024 * 1024 else { throw AppProblem(&quot;单份云端索引超过25 MiB，请减少内容后重试。&quot;) }
+0038      let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+0039      try data.write(
+0040        to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+0041      defer { try? FileManager.default.removeItem(at: url) }
+0042      let record =
+0043        replacing?.record
+0044        ?? CKRecord(recordType: &quot;FaCaiPrivateData&quot;, recordID: CKRecord.ID(recordName: id))
+0045      record[&quot;body&quot;] = CKAsset(fileURL: url)
+0046      record[&quot;checksum&quot;] = BackupService.hash(data) as CKRecordValue
+0047      // One record per request: optimistic record-version checks provide the required CAS.
+0048      // The default zone does not require/support a multi-record atomic transaction.
+0049      let result = try await database.modifyRecords(
+0050        saving: [record], deleting: [], savePolicy: .ifServerRecordUnchanged, atomically: false)
+0051      guard let saved = result.saveResults[record.recordID] else {
+0052        throw AppProblem(&quot;iCloud 未确认保存，请重试。&quot;)
+0053      }
+0054      return try CloudObject(bytes: data, record: saved.get())
+0055    }
+0056  }
+0057  
+0058  @MainActor @Observable final class PersonalCloudStore {
+0059    private(set) var preferences = CloudPreferences()
+0060    private(set) var status = &quot;尚未开启，内容保存在本机&quot;
+0061    private(set) var running = false
+0062    private(set) var backups: [CloudBackupItem] = []
+0063    var error: String?
+0064    private var ledger = CloudLedger()</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

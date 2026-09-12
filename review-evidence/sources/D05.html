@@ -1,0 +1,33 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>D05 · Local feature and network explanation · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · D05</p><h1>D05 · 发财了</h1><p class="lead" lang="en">Local feature and network explanation</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../facai.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/D05.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is an existing local document, not proof of text submitted to Apple.</p></div><p class="source-note">Project key: facai<br>Original relative path: Docs/AppStore/当前版本_网络活动说明.txt<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 220c53a378868b48b6633a1034c22092343e887f540073fb5d1e2f3dc5295ac1<br>Evidence level: pre-existing local document; submission not verified<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 33</h2><pre class="source-code"><code>0001  发财了 1.0.1：核心功能与网络活动补充说明
+0002  更新日期：2026-09-10
+0003  Apple App ID：6809424943
+0004  Bundle ID：com.facaile
+0005  [REDACTED: personal/account/contact detail; original line retained]
+0006  [REDACTED: personal/account/contact detail; original line retained]
+0007  [REDACTED: personal/account/contact detail; original line retained]
+0008  [REDACTED: personal/account/contact detail; original line retained]
+0009  
+0010  本文件按当前工程功能整理，可用于补充现有案例。尚未发送给Apple；正式服务配置及生产验证以实际送审构建为准。
+0011  
+0012  一、本地核心功能
+0013  发财了是一款个人生活记录与每日鼓励工具。愿望与行动计划、专注计时、愿景板、心情和照片日记、引导式记录、活动与心情回顾、成长周报、那年今日、未来信、小金芽花园、收藏、自定义宣言、主题、小组件及海报生成在设备本地运行。
+0014  图片编辑和人物辅助构图使用设备端处理及Apple Vision。120句文案的9款声音随App提供；用户自定义声音来自其主动导入音频或录音，保存后本机播放。鼓励电台在本机编排并播放这些声音，支持后台播放和系统媒体控制。
+0015  成长电影与PDF纪念册使用用户主动选择的记录和媒体在本机制作。亲友鼓励礼物使用本地文字、照片和声音制作为文件，导入时校验并先预览后收藏，不存在公开社区、联系人上传或自动发送。
+0016  上述功能不要求注册App账号，没有广告、第三方统计或追踪SDK，没有自建账号服务器或内容后端。网络不可用不阻止使用本机已有记录及资源。
+0017  
+0018  二、用户可选择的个人iCloud
+0019  个人iCloud默认关闭。用户明确开启后，通过Apple CloudKit的私人数据库，将勾选类别保存到用户自己的Apple iCloud账户，在其设备间同步。不会使用CloudKit公共数据库公开这些记录。
+0020  可选十类：愿望及照片、日记与每日记录、收藏、自定义宣言及声音、未来信及声音、愿景板、花园、电台列表、已保存的专注记录、亲友鼓励礼物及附件。
+0021  默认仅Wi-Fi；应用进入前台、本机修改或用户主动点击同步时尝试连接。云备份、读取备份列表和按类别恢复，也需要访问互联网及Apple iCloud服务。关闭同步或没有网络时，本机记录仍可保存。
+0022  在恢复覆盖前保留本机恢复副本；用户可选择恢复类别。关闭同步或删除本机全部数据不会自动删除所有云端数据和历史备份。账户发生变更时暂停同步，待用户确认。
+0023  
+0024  三、系统服务及用户主动触发的网络活动
+0025  通过系统照片/文件选择器读取尚未下载的云端资源时，可能由Apple或用户选择的文件提供方下载。使用已在设备中的资源可离线处理。
+0026  系统分享、App Store评分或商店链接、支持邮件，以及用户把备份、礼物、电影、PDF、海报或愿景板交给其他接收方时，可能由系统服务或用户选择的目标产生网络连接。
+0027  普通提醒及未来信使用本地通知。专注实时活动仅显示计时，不使用开发者服务器或远程推送；小组件通过App Group读取快照与时间线。隐私锁使用系统验证，App不读取生物特征模板或设备密码。
+0028  
+0029  四、请依据当前版本继续评估
+0030  核心本地流程可以离线使用；用户开启的iCloud同步、云备份和恢复本身需要网络，不应将整个App描述为完全无网络活动。
+0031  恳请结合以上功能与网络边界继续评估本版本适用的备案要求或例外条件。如需指定功能录屏、网络访问说明或其他补充资料，请告知具体要求。
+0032  
+0033  本次仅准备材料。正式团队签名、iCloud生产schema及真实双设备验证仍需在发行环境完成。历史签字原件保持原文并单独标注旧版适用范围，不作为当前版完整功能说明。</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

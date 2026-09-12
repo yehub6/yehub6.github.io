@@ -1,0 +1,37 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S15  On-device portrait segmentation
+
+Project key: photo
+Original relative path: IDPhotoStudio/ImageProcessor.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 94629b3fd94a9dd83c4216ac3d42c3e7010184c9ea74f7be281c0a994807a6f8
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 978 to 998
+
+```text
+0978          return (minimum.outputImage ?? mask).cropped(to: mask.extent)
+0979      }
+0980  
+0981      private static func removeBackgroundWithPersonSegmentation(
+0982          from image: CGImage,
+0983          faceBounds: CGRect?
+0984      ) throws -> CGImage {
+0985          let request = VNGeneratePersonSegmentationRequest()
+0986          request.qualityLevel = .accurate
+0987          request.outputPixelFormat = kCVPixelFormatType_OneComponent8
+0988          let handler = VNImageRequestHandler(cgImage: image, orientation: .up)
+0989          try handler.perform([request])
+0990          guard let buffer = request.results?.first?.pixelBuffer else { throw ProcessingError.noSubject }
+0991  
+0992          let source = CIImage(cgImage: image)
+0993          let rawMask = CIImage(cvPixelBuffer: buffer)
+0994          var mask = rawMask.transformed(by: CGAffineTransform(
+0995              scaleX: source.extent.width / rawMask.extent.width,
+0996              y: source.extent.height / rawMask.extent.height
+0997          ))
+0998          mask = closingDocumentPortraitGaps(
+```

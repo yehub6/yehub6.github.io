@@ -1,0 +1,44 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S05  UI testing advertising early return
+
+Project key: vpn
+Original relative path: ConfigStudio/Advertising/AdMobSupport.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: 07f16fbbe975dc0d5ab0e8c45c6d4aa4e86cb3de22d78ae31fcc9d4eec27f3dd
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 135 to 162
+
+```text
+0135      func configure() async {
+0136          let arguments = ProcessInfo.processInfo.arguments
+0137  #if DEBUG
+0138          if arguments.contains("-ExerciseLaunchAdGate") {
+0139              await exerciseLaunchGateForUITesting()
+0140              return
+0141          }
+0142          if arguments.contains("-AdMobLaunchTest") {
+0143              await performDebugAdConfiguration()
+0144              return
+0145          }
+0146  #endif
+0147          if arguments.contains("-UITesting") {
+0148              launchGateState = .complete
+0149              configurationFinished = true
+0150              return
+0151          }
+0152          if let configurationTask {
+0153              await configurationTask.value
+0154              return
+0155          }
+0156          let task = Task { @MainActor [weak self] in
+0157              guard let self else { return }
+0158              await self.performConfiguration()
+0159          }
+0160          configurationTask = task
+0161          await task.value
+0162      }
+```

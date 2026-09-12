@@ -1,0 +1,50 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>D01 · Local review-note document not proof of submission · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · D01</p><h1>D01 · 制作视频 / Vidma</h1><p class="lead" lang="en">Local review-note document not proof of submission</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../vidma.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/D01.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is an existing local document, not proof of text submitted to Apple.</p></div><p class="source-note">Project key: vidma<br>Original relative path: SubmissionMaterials/submission-docs/APP_REVIEW_NOTES.md<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: c46e7f0bde57984b8c512ed1de6a478208c1bd20a8245446b653696a03cfacda<br>Evidence level: pre-existing local document; submission not verified<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 50</h2><pre class="source-code"><code>0001  # Vidma 1.0.3 审核备注 / App Review Notes
+0002  
+0003  本页为可提交备注草稿。审核联系人姓名和电话请在后台按账号实际信息填写，邮箱可用 [REDACTED: contact email]。无需演示账号；App 无 Vidma 登录或应用内购买。
+0004  
+0005  ## 简体中文
+0006  
+0007  Vidma（制作视频）是 iPhone / iPad 视频创作工具。版本 1.0.3 新增并完善本机创作工作室，支持直接导入、效果预览及对应输出。核心编辑、合成和导出在设备上完成，没有开发者媒体处理服务器。
+0008  
+0009  建议检查流程：
+0010  1. 打开 App，完成适用的 Google UMP 隐私选择和 ATT 系统选择。拒绝跟踪不限制编辑。开屏广告有无填充、加载失败和超时放行路径，并非每次必定出现。
+0011  2. 首页 → 本机创作工作室 → 导入素材开始创作，从相册或 Files 选择一个短视频；也可先选择功能后导入。
+0012  3. 在调整层修改曝光或滤镜，应用后切换原片／编辑后，播放及拖动查看效果。也可在普通编辑器添加文字、贴纸、画中画或手动马赛克。
+0013  4. 进入字幕功能，手动输入或导入 SRT，调整文本、时间、样式和位置。自动识别需使用清晰说话声音，并受系统语言资源支持；不承诺识别歌曲或全部噪声场景。
+0014  5. 点击导出，查看明确显示的原始尺寸或选择预设，开始导出；任务完成后预览，选择保存到相册或系统分享。只有保存时请求相册添加权限。
+0015  6. 模板与自动成片可分别从文件选择视频／图片和音乐；创建结果为普通可编辑工程。
+0016  7. 提词器录制由用户主动启动，使用相机及麦克风。双语字幕可能需要下载 Apple 语言资源。
+0017  
+0018  广告及数据：
+0019  App 包含 Google Mobile Ads 13.9.0 / UMP 3.1.0，使用原生、横幅和开屏广告。适用地区 UMP 处理后、Mobile Ads 初始化和广告加载前检查 ATT。授权可使用 IDFA；拒绝时 IDFA 不可用且编辑不受限制。UMP 要求时，设置中提供广告隐私选项。媒体和工程内容不提供给 Google 广告服务。
+0020  
+0021  iOS 26 的语音分析使用 Apple 设备端资源；旧系统自动模式可能将所选时间线音频交给 Apple 语音服务，支持时可选择仅设备端。FCPXML 导出基础主视频时间线，不保证转换 Vidma 所有专属效果。人脸自动打码应人工复查。
+0022  
+0023  本次截图保持原有深色样式，不包含价格或免费宣传。截图来自与当前功能代码一致的 2026-09-09 本地展示构建；版本更正为 1.0.3 后没有伪造新截图。
+0024  
+0025  支持：https://yehub6.github.io/legal/vidma-support.html
+0026  隐私：https://yehub6.github.io/legal/vidma-privacy.html
+0027  联系：[REDACTED: contact email]
+0028  
+0029  ## English
+0030  
+0031  Vidma is a video-creation app for iPhone and iPad. Version 1.0.3 expands Local Creator Studio and connects import, preview and export. Core editing and rendering are local. No Vidma account, developer-run media-processing server or in-app purchase is required.
+0032  
+0033  Suggested review:
+0034  1. Launch and complete applicable UMP choices and the system ATT choice. Declining tracking does not restrict editing. App-open advertising has no-fill, failure and timeout paths, so an ad is not guaranteed on every launch.
+0035  2. Open Home → Local Creator Studio → Import Media to Create, then select a short video from Photos or Files. A workflow can also be selected before importing.
+0036  3. Apply an adjustment or filter and compare Original / Edited previews; play and seek. The regular editor also supports text, stickers, picture-in-picture and manual mosaic masks.
+0037  4. Open captions, enter text manually or import SRT, and edit timing, style and position. Recognition needs clear spoken audio and supported system language resources; song transcription is not guaranteed.
+0038  5. Export using the displayed original dimensions or a preset. Preview the completed task and save to Photos or share. Add-only Photos permission is requested when saving.
+0039  6. Templates &amp; AutoCut provides separate video/image and music file selection, producing an ordinary editable project.
+0040  7. Teleprompter recording uses camera and microphone only when invoked. Bilingual captions may first download Apple language resources.
+0041  
+0042  The app includes Google Mobile Ads 13.9.0 and UMP 3.1.0 with native, banner and app-open placements. Applicable UMP processing precedes the ATT decision and Mobile Ads initialization. IDFA is available only with authorization. Editing remains available when tracking is denied. Settings offers Ad Privacy Options when required by UMP. Media and project content are not supplied to advertising.
+0043  
+0044  On iOS 26 the speech-analysis path uses Apple on-device resources. On older systems, Automatic mode may send selected timeline audio to Apple&#x27;s speech service; On Device Only is offered where supported. FCPXML transfers a basic primary-video timeline, not all proprietary effects. Automatically generated privacy masks require human review.
+0045  
+0046  Store screenshots use the established dark design and contain no price claims. They were captured on September 9 from the same functional app code before the version label was corrected to 1.0.3.
+0047  
+0048  Support: https://yehub6.github.io/legal/vidma-support.html
+0049  Privacy: https://yehub6.github.io/legal/vidma-privacy.html
+0050  Contact: [REDACTED: contact email]</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

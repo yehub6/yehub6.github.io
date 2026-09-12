@@ -1,0 +1,38 @@
+<!doctype html> <html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; font-src 'self'; script-src 'self'; worker-src 'self'; manifest-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-src 'none'; media-src 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="theme-color" content="#f8f6f1"><meta name="color-scheme" content="light"><meta name="format-detection" content="telephone=no"><link rel="icon" href="../../favicon.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex, follow"><meta name="description" content="App-specific technical evidence, network explanations and public source excerpts."><title>D07 · Local review-note document not proof of submission · 宝妈阿叶</title><link rel="stylesheet" href="../../assets/r/b0f43d642af34bb5.css"><link rel="stylesheet" href="../../assets/r/10c923c4e043c4bc.css"></head> <body class="evidence-page"><a class="skip-link" href="#main">跳到正文 / Skip to content</a><header class="site-nav"><a class="brand" href="../../index.html">叶　宝妈阿叶</a><nav aria-label="资料导航"><a href="../../review-evidence/index.html">资料索引 / Index</a><a href="../../support.html">支持 / Support</a><a href="#english" lang="en">English</a></nav></header> <main class="evidence-main" id="main"><p class="eyebrow">SOURCE RECORD · D07</p><h1>D07 · 照片制作</h1><p class="lead" lang="en">Local review-note document not proof of submission</p><p class="meta">公开摘录 · 截取原件于 2026-09-12 / Captured 2026-09-12</p> <div class="jump-links"><a href="../id-photo-studio.html">对应 App / App evidence</a><a href="../../downloads/review-evidence-20260912/sources/D07.txt" download>下载公开摘录 / Download TXT</a><a href="../methodology.html">证据范围 / Provenance</a></div> <div class="notice" id="english"><p>保留原行号。个人／账户信息如有删除，已用 REDACTED 标识。原文件 SHA-256 只用于识别截取时的本机原文件；不能证明编写或提交时间，也不等于脱敏下载文件的哈希。</p><p lang="en">Original line numbers are retained. Redactions are explicitly marked. The original full-file hash identifies a captured local file, not its creation/submission time or the redacted download. Public-file hashes are listed separately. This is an existing local document, not proof of text submitted to Apple.</p></div><p class="source-note">Project key: photo<br>Original relative path: AppStore/Submission/02-App-Review-审核备注.md<br>Captured: 2026-09-12T18:57:15+08:00<br>Original full-file SHA256: 34876934f3e95ebcccb3613acd4d8055256c078fcf1fb98532d913e4edcb87bc<br>Evidence level: pre-existing local document; submission not verified<br>Build correspondence: not yet established with an Apple-received binary.<br>Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.</p><h2>Original lines 1 to 58</h2><pre class="source-code"><code>0001  # iOS / iPadOS App Review 审核备注
+0002  
+0003  更新日期：2026 年 8 月 26 日
+0004  
+0005  ## 审核要点
+0006  
+0007  - 无需注册、登录、订阅、购买或激活。
+0008  - 核心照片处理全部在设备本地完成。
+0009  - Apple Vision 用于人像前景、脸部和姿态分析；用户照片及分析结果不会上传。
+0010  - iPhone / iPad 版包含 Google Mobile Ads 开屏、横幅和原生广告。
+0011  - 广告初始化前处理 Google UMP；需要访问 IDFA 时请求 Apple ATT。
+0012  - 拒绝 ATT 不影响任何照片功能，仍可能出现不使用 IDFA 的广告。
+0013  - 广告是否出现及加载时间取决于网络、地区隐私选择和广告填充，首次启动不保证立即有可展示广告。
+0014  
+0015  ## 审核步骤
+0016  
+0017  1. 启动 App，完成可能出现的 UMP 隐私选择和 ATT 系统授权。
+0018  2. 点击“选择照片”，使用相机拍摄或在系统照片选择器中选择一张正面人像。
+0019  3. 等待本机人像识别完成。
+0020  4. 切换预设尺寸或进入“更多证件与签证尺寸”进行分类、搜索和收藏。
+0021  5. 打开“自定义尺寸”，使用毫米、厘米或英寸输入宽高。
+0022  6. 更换预设或自定义背景色。
+0023  7. 在“构图与画面微调”中测试人物位置、亮度、阴影、色温、自然美颜和一键光线优化。
+0024  8. 查看“照片智能检查”。其结果仅供拍摄参考，不代表任何机构审核结论。
+0025  9. 点击“生成证件照”，测试 PNG、JPEG、HEIC、PDF，150/300/600/1200 DPI，以及单张或打印排版。面板会显示实际输出像素；JPEG/HEIC 单张可选约 50/100/200 KB。
+0026  10. 测试保存到照片、保存到文件或系统分享。PDF 不写入照片图库。
+0027  11. 设置页可切换五套皮肤、五种语言、广告隐私选项、反馈和 App Store 评价入口。
+0028  
+0029  ## 可直接粘贴的英文备注
+0030  
+0031  </code></pre><p class="source-note">0032 Photo Maker requires no registration, login, subscription, purchase, activation, or demo account.<br>0033 <br>0034 All portrait processing is performed on the device. Apple Vision is used for person segmentation plus face and body-position analysis. The selected photo and Vision results are not uploaded to a developer-operated server or shared with the advertising SDK.<br>0035 <br>0036 Review steps:<br>0037 1. Launch the app and complete any Google UMP privacy form and Apple ATT prompt that may apply.<br>0038 2. Tap Choose Photo, then capture one portrait or select one image in the system photo picker.<br>0039 3. Wait for on-device portrait processing to finish.<br>0040 4. Choose a preset, search or favorite additional sizes, or enter custom width and height in millimeters, centimeters, or inches.<br>0041 5. Select a solid or custom background. Optional controls cover zoom, placement, brightness, contrast, saturation, shadows, warmth, natural beauty, and one-tap light optimization.<br>0042 6. The Photo Check panel provides reference-only checks for face detection, one person, source resolution, and face position.<br>0043 7. Tap Generate ID Photo. Test PNG, JPEG, HEIC, or PDF; 150/300/600/1200 DPI; and single-photo or print-sheet layouts. The exact output pixels are shown. Single JPEG/HEIC output also supports approximate 50/100/200 KB targets.<br>0044 8. Save an image to Photos, save to Files, or use the system share sheet. PDF is saved to Files or shared.<br>0045 9. Settings includes five themes, five languages, advertising privacy options when required, email feedback, and an App Store review link.<br>0046 <br>0047 The iPhone and iPad version uses Google Mobile Ads SDK 13.8.0 and User Messaging Platform 3.1.0 for app-open, banner, and native ads. UMP is handled before ad initialization. Apple ATT authorization is requested before access to the advertising identifier. Declining tracking does not restrict any photo feature. Ads may still be served without IDFA. Ad availability and timing depend on network access, regional consent requirements, and ad fill, so an app-open ad is not guaranteed to appear immediately on every launch.<br>0048 <br>0049 Camera permission is requested only after the user chooses direct capture. Add-only Photos permission is requested only when saving an image to Photos. No special sample file is required.<br>0050</p><pre class="source-code"><code>0051  
+0052  ## 审核联系人
+0053  
+0054  - 姓名：[待填写]
+0055  - 电话：[待填写，包含国家/地区代码]
+0056  - 邮箱：`[REDACTED: contact email]`
+0057  - 登录账号：不需要
+0058  - 登录密码：不需要</code></pre></main><footer class="site-footer"><span>© 2026 宝妈阿叶 · 公开技术资料 / Public technical materials</span><a href="../../review-evidence/index.html">返回资料索引 / Evidence index</a></footer></body></html>

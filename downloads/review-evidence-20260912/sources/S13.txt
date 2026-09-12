@@ -1,0 +1,80 @@
+Public edition prepared 2026-09-12. Personal/account/contact details are visibly redacted where present. The original SHA256 identifies the captured unredacted full file, not this redacted extract. PUBLIC-SHA256SUMS.txt identifies downloadable public files. This material is not a signed declaration or proof of an Apple-received Build.
+
+# S13  Apple CloudKit private database and initial state
+
+Project key: facai
+Original relative path: FaCai/Services/PersonalCloudStore.swift
+Captured: 2026-09-12T18:57:15+08:00
+Original full-file SHA256: aaa6434707f615a526280f75aeea3cf125f1e675b38c180c728a952079b7a1f4
+Evidence level: local source excerpt
+Build correspondence: not yet established with an Apple-received binary.
+Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
+
+## Original lines 1 to 64
+
+```text
+0001  import CloudKit
+0002  import Foundation
+0003  import Network
+0004  import Observation
+0005  
+0006  @MainActor protocol CloudTransport {
+0007    func account() async throws -> String
+0008    func fetch(_ id: String) async throws -> CloudObject?
+0009    func save(_ id: String, data: Data, replacing: CloudObject?) async throws -> CloudObject
+0010  }
+0011  struct CloudObject {
+0012    var bytes: Data
+0013    var record: CKRecord?
+0014  }
+0015  @MainActor final class AppleCloudTransport: CloudTransport {
+0016    private var container: CKContainer { CKContainer(identifier: "iCloud.com.facaile") }
+0017    private var database: CKDatabase { container.privateCloudDatabase }
+0018    func account() async throws -> String {
+0019      guard try await container.accountStatus() == .available else {
+0020        throw AppProblem("请在系统设置登录 iCloud，并允许发财了使用 iCloud。")
+0021      }
+0022      return try await container.userRecordID().recordName
+0023    }
+0024    func fetch(_ id: String) async throws -> CloudObject? {
+0025      do {
+0026        let record = try await database.record(for: CKRecord.ID(recordName: id))
+0027        guard let asset = record["body"] as? CKAsset, let url = asset.fileURL,
+0028          let hash = record["checksum"] as? String,
+0029          (try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? Int.max) <= 25 * 1024 * 1024
+0030        else { throw AppProblem("iCloud 文件不完整或过大。") }
+0031        let bytes = try Data(contentsOf: url)
+0032        guard BackupService.hash(bytes) == hash else { throw AppProblem("iCloud 文件校验失败，请稍后重试。") }
+0033        return CloudObject(bytes: bytes, record: record)
+0034      } catch let error as CKError where error.code == .unknownItem { return nil }
+0035    }
+0036    func save(_ id: String, data: Data, replacing: CloudObject?) async throws -> CloudObject {
+0037      guard data.count <= 25 * 1024 * 1024 else { throw AppProblem("单份云端索引超过25 MiB，请减少内容后重试。") }
+0038      let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+0039      try data.write(
+0040        to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+0041      defer { try? FileManager.default.removeItem(at: url) }
+0042      let record =
+0043        replacing?.record
+0044        ?? CKRecord(recordType: "FaCaiPrivateData", recordID: CKRecord.ID(recordName: id))
+0045      record["body"] = CKAsset(fileURL: url)
+0046      record["checksum"] = BackupService.hash(data) as CKRecordValue
+0047      // One record per request: optimistic record-version checks provide the required CAS.
+0048      // The default zone does not require/support a multi-record atomic transaction.
+0049      let result = try await database.modifyRecords(
+0050        saving: [record], deleting: [], savePolicy: .ifServerRecordUnchanged, atomically: false)
+0051      guard let saved = result.saveResults[record.recordID] else {
+0052        throw AppProblem("iCloud 未确认保存，请重试。")
+0053      }
+0054      return try CloudObject(bytes: data, record: saved.get())
+0055    }
+0056  }
+0057  
+0058  @MainActor @Observable final class PersonalCloudStore {
+0059    private(set) var preferences = CloudPreferences()
+0060    private(set) var status = "尚未开启，内容保存在本机"
+0061    private(set) var running = false
+0062    private(set) var backups: [CloudBackupItem] = []
+0063    var error: String?
+0064    private var ledger = CloudLedger()
+```
