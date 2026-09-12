@@ -6,6 +6,8 @@
     "purpose": "Automation conditions and advertising initialization",
     "original_sha256": "39048a58df0865808290fbbda958232849d87ed0f907950b7340c8c05b227632",
     "public_redacted": false,
+    "original_line_count": 680,
+    "public_line_count": 75,
     "public_download": "downloads/review-evidence-20260912/sources/S01.txt",
     "page": "review-evidence/sources/S01.html"
   },
@@ -16,6 +18,8 @@
     "purpose": "Sample state versus normal project loading",
     "original_sha256": "dd06340be12c01be850fb17f787606c30e26ae2da7826539ed3659aee4e6f7e9",
     "public_redacted": false,
+    "original_line_count": 228,
+    "public_line_count": 90,
     "public_download": "downloads/review-evidence-20260912/sources/S02.txt",
     "page": "review-evidence/sources/S02.html"
   },
@@ -26,6 +30,8 @@
     "purpose": "Screenshot seed entry and sample metadata",
     "original_sha256": "d09a909daedd3c0d1242113560b2ceebf413224168ffa9c71a526fc2efcb04a8",
     "public_redacted": false,
+    "original_line_count": 184,
+    "public_line_count": 33,
     "public_download": "downloads/review-evidence-20260912/sources/S03.txt",
     "page": "review-evidence/sources/S03.html"
   },
@@ -36,6 +42,8 @@
     "purpose": "Apple speech request and local-only versus automatic attempts",
     "original_sha256": "1f55567b14fb54e0699df7709137a264da703dd162d7a5b550e944670f628220",
     "public_redacted": false,
+    "original_line_count": 478,
+    "public_line_count": 58,
     "public_download": "downloads/review-evidence-20260912/sources/S04.txt",
     "page": "review-evidence/sources/S04.html"
   },
@@ -46,6 +54,8 @@
     "purpose": "UI testing advertising early return",
     "original_sha256": "07f16fbbe975dc0d5ab0e8c45c6d4aa4e86cb3de22d78ae31fcc9d4eec27f3dd",
     "public_redacted": false,
+    "original_line_count": 732,
+    "public_line_count": 28,
     "public_download": "downloads/review-evidence-20260912/sources/S05.txt",
     "page": "review-evidence/sources/S05.html"
   },
@@ -56,6 +66,8 @@
     "purpose": "Explicit UI test arguments and local sample import",
     "original_sha256": "4dfb80e53764be28f98a0adca6e2fe2b03f63dd8d58e958b7cf7d70efda77985",
     "public_redacted": false,
+    "original_line_count": 95,
+    "public_line_count": 44,
     "public_download": "downloads/review-evidence-20260912/sources/S06.txt",
     "page": "review-evidence/sources/S06.html"
   },
@@ -66,6 +78,8 @@
     "purpose": "Direct HTTPS text download",
     "original_sha256": "71969530b54cfc664a003d02ef5798df2da38f59d4b3f5bb42d7983747b5776c",
     "public_redacted": false,
+    "original_line_count": 232,
+    "public_line_count": 53,
     "public_download": "downloads/review-evidence-20260912/sources/S07.txt",
     "page": "review-evidence/sources/S07.html"
   },
@@ -76,6 +90,8 @@
     "purpose": "DNS TCP and TLS diagnostic implementations",
     "original_sha256": "18b76ffb1c396aacd39fe050153fbb168c5d545afba06890c8266b6a3ff7fa8a",
     "public_redacted": false,
+    "original_line_count": 135,
+    "public_line_count": 86,
     "public_download": "downloads/review-evidence-20260912/sources/S08.txt",
     "page": "review-evidence/sources/S08.html"
   },
@@ -86,6 +102,8 @@
     "purpose": "Visible local demo data entry",
     "original_sha256": "1872e204e9d109ddd3fe72d14624554a27862caba0b992ef29851b63bd9e72c4",
     "public_redacted": false,
+    "original_line_count": 403,
+    "public_line_count": 17,
     "public_download": "downloads/review-evidence-20260912/sources/S09.txt",
     "page": "review-evidence/sources/S09.html"
   },
@@ -95,7 +113,9 @@
     "relative_file": "ConfigStudio/Resources/ConfigStudio.entitlements",
     "purpose": "Checked source entitlement file",
     "original_sha256": "01e48c6e042f2f46f3fa9bb69d26eb2daab949a02eef4f53650d3f694c04316c",
-    "public_redacted": false,
+    "public_redacted": true,
+    "original_line_count": 10,
+    "public_line_count": 4,
     "public_download": "downloads/review-evidence-20260912/sources/S10.txt",
     "page": "review-evidence/sources/S10.html"
   },
@@ -106,6 +126,8 @@
     "purpose": "ECB data request XML parsing and cache fallback",
     "original_sha256": "1fb932a35430ec0bec8fc612bbbb251283e749c30dad8df59702221fc951a623",
     "public_redacted": false,
+    "original_line_count": 271,
+    "public_line_count": 75,
     "public_download": "downloads/review-evidence-20260912/sources/S11.txt",
     "page": "review-evidence/sources/S11.html"
   },
@@ -116,6 +138,8 @@
     "purpose": "On-device Vision OCR",
     "original_sha256": "4466d6c697543b42c508f5baf27ba70a6c722b892e0826047c2519b32f9f10c3",
     "public_redacted": false,
+    "original_line_count": 87,
+    "public_line_count": 31,
     "public_download": "downloads/review-evidence-20260912/sources/S12.txt",
     "page": "review-evidence/sources/S12.html"
   },
@@ -126,6 +150,8 @@
     "purpose": "Apple CloudKit private database and initial state",
     "original_sha256": "aaa6434707f615a526280f75aeea3cf125f1e675b38c180c728a952079b7a1f4",
     "public_redacted": false,
+    "original_line_count": 510,
+    "public_line_count": 64,
     "public_download": "downloads/review-evidence-20260912/sources/S13.txt",
     "page": "review-evidence/sources/S13.html"
   },
@@ -136,6 +162,8 @@
     "purpose": "CloudKit private or shared database selection",
     "original_sha256": "09e062cb6b0816f34879569a824953bc335bafa742393969efd5a398b8d6cf7a",
     "public_redacted": false,
+    "original_line_count": 182,
+    "public_line_count": 55,
     "public_download": "downloads/review-evidence-20260912/sources/S14.txt",
     "page": "review-evidence/sources/S14.html"
   },
@@ -146,6 +174,8 @@
     "purpose": "On-device portrait segmentation",
     "original_sha256": "94629b3fd94a9dd83c4216ac3d42c3e7010184c9ea74f7be281c0a994807a6f8",
     "public_redacted": false,
+    "original_line_count": 1599,
+    "public_line_count": 21,
     "public_download": "downloads/review-evidence-20260912/sources/S15.txt",
     "page": "review-evidence/sources/S15.html"
   },
@@ -156,6 +186,8 @@
     "purpose": "Optional Apple WeatherKit and MapKit data",
     "original_sha256": "f9e65dcf1453a9e95d2ef063e08a3a76a98bd337c4d3e4470ddcdcf7ee5a4c2c",
     "public_redacted": false,
+    "original_line_count": 132,
+    "public_line_count": 58,
     "public_download": "downloads/review-evidence-20260912/sources/S16.txt",
     "page": "review-evidence/sources/S16.html"
   },
@@ -166,6 +198,8 @@
     "purpose": "Apple Game Center authentication and offline status",
     "original_sha256": "74098406d454023245605f32e67b5012a6976c5104ca47480ddbdae33d97ce7e",
     "public_redacted": false,
+    "original_line_count": 458,
+    "public_line_count": 30,
     "public_download": "downloads/review-evidence-20260912/sources/S17.txt",
     "page": "review-evidence/sources/S17.html"
   },
@@ -176,6 +210,8 @@
     "purpose": "Local macOS numeric App ID",
     "original_sha256": "58e8d499ce2cdaff638999fe72c83deb3a956109ad65e90361955ae7fada8a52",
     "public_redacted": false,
+    "original_line_count": 285,
+    "public_line_count": 11,
     "public_download": "downloads/review-evidence-20260912/sources/S18.txt",
     "page": "review-evidence/sources/S18.html"
   },
@@ -186,6 +222,8 @@
     "purpose": "Local review-note document not proof of submission",
     "original_sha256": "c46e7f0bde57984b8c512ed1de6a478208c1bd20a8245446b653696a03cfacda",
     "public_redacted": true,
+    "original_line_count": 50,
+    "public_line_count": 50,
     "public_download": "downloads/review-evidence-20260912/sources/D01.txt",
     "page": "review-evidence/sources/D01.html"
   },
@@ -196,6 +234,8 @@
     "purpose": "Local review-note document not proof of submission",
     "original_sha256": "96e04d5ad07d26c776e1e9ee8c55d808d90ba9e7bfccd973488b4ae25501bc3e",
     "public_redacted": true,
+    "original_line_count": 39,
+    "public_line_count": 39,
     "public_download": "downloads/review-evidence-20260912/sources/D02.txt",
     "page": "review-evidence/sources/D02.html"
   },
@@ -206,6 +246,8 @@
     "purpose": "Local review-note document not proof of submission",
     "original_sha256": "d6e9c4d7e973cfc182e6f67e9c66cbe03dbe04ed592971e0b113f87f19a13cdc",
     "public_redacted": false,
+    "original_line_count": 13,
+    "public_line_count": 13,
     "public_download": "downloads/review-evidence-20260912/sources/D03.txt",
     "page": "review-evidence/sources/D03.html"
   },
@@ -216,6 +258,8 @@
     "purpose": "Local review-note document not proof of submission",
     "original_sha256": "e58b2995b417a6c33c9fd6bb384c5c9cbd3aba2ed9657d93e1754d7fa506fddb",
     "public_redacted": false,
+    "original_line_count": 33,
+    "public_line_count": 33,
     "public_download": "downloads/review-evidence-20260912/sources/D04.txt",
     "page": "review-evidence/sources/D04.html"
   },
@@ -226,6 +270,8 @@
     "purpose": "Local feature and network explanation",
     "original_sha256": "220c53a378868b48b6633a1034c22092343e887f540073fb5d1e2f3dc5295ac1",
     "public_redacted": true,
+    "original_line_count": 33,
+    "public_line_count": 33,
     "public_download": "downloads/review-evidence-20260912/sources/D05.txt",
     "page": "review-evidence/sources/D05.html"
   },
@@ -236,6 +282,8 @@
     "purpose": "Local development and release identity explanation",
     "original_sha256": "985bdbfa3e89dc1498d38306bd8032baa38950e6e0ba41228f9b56e967154ca5",
     "public_redacted": true,
+    "original_line_count": 79,
+    "public_line_count": 40,
     "public_download": "downloads/review-evidence-20260912/sources/D06.txt",
     "page": "review-evidence/sources/D06.html"
   },
@@ -246,6 +294,8 @@
     "purpose": "Local review-note document not proof of submission",
     "original_sha256": "34876934f3e95ebcccb3613acd4d8055256c078fcf1fb98532d913e4edcb87bc",
     "public_redacted": true,
+    "original_line_count": 58,
+    "public_line_count": 58,
     "public_download": "downloads/review-evidence-20260912/sources/D07.txt",
     "page": "review-evidence/sources/D07.html"
   },
@@ -256,6 +306,8 @@
     "purpose": "Local release handoff and unresolved release checks",
     "original_sha256": "e881355f3ff89ac5abd37df926ad76b4547e43ab6a543b8d8e887a89a7c34ce5",
     "public_redacted": false,
+    "original_line_count": 56,
+    "public_line_count": 43,
     "public_download": "downloads/review-evidence-20260912/sources/D08.txt",
     "page": "review-evidence/sources/D08.html"
   },
@@ -266,6 +318,8 @@
     "purpose": "Local review-note document not proof of submission",
     "original_sha256": "4c9fa48b4f235200f12840ea9d8d750869e9cc232fc1c2123cfa7df7f0ea43be",
     "public_redacted": true,
+    "original_line_count": 39,
+    "public_line_count": 35,
     "public_download": "downloads/review-evidence-20260912/sources/D09.txt",
     "page": "review-evidence/sources/D09.html"
   }

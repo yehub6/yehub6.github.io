@@ -10,17 +10,13 @@ Evidence level: local source excerpt
 Build correspondence: not yet established with an Apple-received binary.
 Line numbers refer to the captured original file. Gaps are explicitly marked. No source code was changed.
 
-## Original lines 1 to 10
+Public scope: only original lines 5–8 are included. Lines 1–4 and 9–10 are omitted; the full configuration file is not published.
+
+## Original lines 5 to 8
 
 ```text
-0001  <?xml version="1.0" encoding="UTF-8"?>
-0002  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-0003  <plist version="1.0">
-0004  <dict>
 0005  	<key>com.apple.security.application-groups</key>
 0006  	<array>
 0007  		<string>group.com.vpntp.shared</string>
 0008  	</array>
-0009  </dict>
-0010  </plist>
 ```
